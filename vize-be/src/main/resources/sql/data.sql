@@ -1,85 +1,45 @@
-TRUNCATE users RESTART IDENTITY CASCADE;
+TRUNCATE posts RESTART IDENTITY CASCADE;
 TRUNCATE boards RESTART IDENTITY CASCADE;
-TRUNCATE posts RESTART IDENTITY;
+TRUNCATE threads RESTART IDENTITY CASCADE;
 
--- Populate Users table
-INSERT INTO users (username, password_hash, email, is_admin, created_at) VALUES
-                                                                             ('admin', '$2a$12$1234567890123456789012OQRl8KHWo1HZ7MKLnLbxDUXJXC2WcR2', 'admin@example.com', TRUE, '2024-01-01 00:00:00'),
-                                                                             ('moderator', '$2a$12$1234567890123456789012OsJoTqO/HLx9k5sQh4WrJ5Wo0XcBl.', 'mod@example.com', FALSE, '2024-01-15 12:30:00'),
-                                                                             ('user1', '$2a$12$1234567890123456789012OvPBn9AMxgbC5/lTGGT5JXCCIUkR0Uu', 'user1@example.com', FALSE, '2024-02-01 09:15:00'),
-                                                                             ('user2', '$2a$12$1234567890123456789012O3LIhK1MK3SbQg.o.FjGeqXa5eQnN/a', 'user2@example.com', FALSE, '2024-02-10 14:20:00'),
-                                                                             ('techguy', '$2a$12$1234567890123456789012OQhP5PzCVVGG3iC.fUlxZ.AhNsOaZbm', 'tech@example.com', FALSE, '2024-02-15 18:45:00'),
-                                                                             ('artlover', '$2a$12$1234567890123456789012OdW5FP3iC7ICMjzBu4QUl4wGCUQDOq', 'art@example.com', FALSE, '2024-03-01 11:10:00'),
-                                                                             ('anonymous', '$2a$12$1234567890123456789012O9Xd8GwLUyhRlD3.TtUOVZxvLkCv3we', NULL, FALSE, '2024-03-10 07:30:00');
-
--- Populate Boards table
 INSERT INTO boards (board_code, board_name, description) VALUES
-                                                             ('tech', 'Technology', 'Discussion about computers, programming, and technology'),
-                                                             ('art', 'Artwork & Creativity', 'Showcase and discuss artworks, drawings, and creative projects'),
-                                                             ('music', 'Music', 'Everything related to music, bands, and instruments'),
-                                                             ('anime', 'Anime & Manga', 'Discussion about Japanese animation and comics'),
-                                                             ('games', 'Video Games', 'Video game discussion, news, and reviews');
+                                                             ('tech', 'Technology', 'Discussions about technology, programming, and gadgets'),
+                                                             ('art', 'Art & Design', 'Share and discuss artwork, design, and creative projects');
 
--- Populate Posts table (threads)
--- Tech threads
-INSERT INTO posts (board_id, user_id, parent_id, subject, content, image_url, created_at) VALUES
-                                                                                              (1, 3, NULL, 'Getting started with PostgreSQL', 'I''m new to PostgreSQL. What are some good resources to learn it properly?', NULL, '2024-04-01 09:30:00'),
-                                                                                              (1, 5, NULL, 'Best Linux distro for developers', 'I''m looking for a Linux distribution that''s good for software development. Any recommendations?', NULL, '2024-04-02 14:15:00'),
-                                                                                              (1, NULL, NULL, 'New Raspberry Pi model released', 'Has anyone tried the latest Raspberry Pi model? What do you think about it?', 'https://example.com/images/raspberry.jpg', '2024-04-03 16:40:00');
+-- Insert threads (without op_post_id for now)
+INSERT INTO threads (board_id, title) VALUES
+-- Tech board threads
+(1, 'Best programming languages for beginners'),
+(1, 'New AI developments in 2025'),
+(1, 'Mechanical keyboards discussion'),
+-- Art board threads
+(2, 'Digital art software recommendations'),
+(2, 'Traditional vs digital art techniques'),
+(2, 'Share your latest artwork');
 
--- Art threads
-INSERT INTO posts (board_id, user_id, parent_id, subject, content, image_url, created_at) VALUES
-                                                                                              (2, 6, NULL, 'Digital art tips', 'What software do you use for digital art? Looking for recommendations for a beginner.', NULL, '2024-04-01 10:45:00'),
-                                                                                              (2, 4, NULL, 'My latest painting', 'Just finished this landscape painting. Feedback appreciated!', 'https://example.com/images/landscape.jpg', '2024-04-02 18:20:00');
+-- Insert posts
+INSERT INTO posts (id, is_op, board_id, thread_id, content) VALUES
+-- Tech board threads - OP posts
+(1, TRUE, 1, 1, 'Hi everyone! I''m looking to start learning programming. Which languages would you recommend for absolute beginners?'),
+(2, TRUE, 1, 2, 'Let''s discuss the latest developments in AI this year. What breakthroughs have you found most impressive?'),
+(3, TRUE, 1, 3, 'What''s your favorite mechanical keyboard? I''m looking to upgrade and need some recommendations.'),
 
--- Music threads
-INSERT INTO posts (board_id, user_id, parent_id, subject, content, image_url, created_at) VALUES
-                                                                                              (3, 3, NULL, 'Learning guitar', 'I''m starting to learn guitar. Any tips for absolute beginners?', NULL, '2024-04-03 11:30:00'),
-                                                                                              (3, 7, NULL, 'New indie bands to check out', 'Looking for new indie bands. Who are you listening to these days?', NULL, '2024-04-04 15:25:00');
+-- Tech board threads - Reply posts
+(4, FALSE, 1, 1, 'Python is great for beginners. Easy syntax, tons of learning resources, and useful for many applications from web development to data science.'),
+(5, FALSE, 1, 2, 'The recent advancements in multimodal models have been incredible. They can now understand context across text, images, and audio simultaneously.'),
+(6, FALSE, 1, 3, 'I use a Keychron Q1 with Gateron Brown switches. Amazing build quality and the sound is perfect for my preferences.'),
 
--- Anime threads
-INSERT INTO posts (board_id, user_id, parent_id, subject, content, image_url, created_at) VALUES
-                                                                                              (4, 6, NULL, 'Anime recommendations for Spring 2024', 'What are the best new anime series of this season?', NULL, '2024-04-02 13:15:00'),
-                                                                                              (4, 5, NULL, 'Classic anime everyone should watch', 'Let''s make a list of must-watch classic anime series for newcomers.', NULL, '2024-04-05 10:10:00');
+-- Art board threads - OP posts
+(7, TRUE, 2, 4, 'I''m looking for new digital art software. What are you all using these days?'),
+(8, TRUE, 2, 5, 'How have you incorporated traditional techniques into your digital workflow? Or vice versa?'),
+(9, TRUE, 2, 6, 'Post your latest artwork here! I''ll start with a landscape piece I finished last week.'),
 
--- Games threads
-INSERT INTO posts (board_id, user_id, parent_id, subject, content, image_url, created_at) VALUES
-                                                                                              (5, 4, NULL, 'PC gaming setup advice', 'I''m building a new gaming PC. What components would you recommend?', NULL, '2024-04-01 19:45:00'),
-                                                                                              (5, NULL, NULL, 'Favorite indie games', 'What are some underrated indie games that more people should play?', NULL, '2024-04-04 17:30:00');
+-- Art board threads - Reply posts
+(10, FALSE, 2, 4, 'Procreate on iPad is my go-to. The brushes are fantastic and the interface is intuitive. For desktop, I recommend Clip Studio Paint.'),
+(11, FALSE, 2, 5, 'I often sketch traditionally with pencil, scan it, and then finish the coloring digitally. It gives my work a unique texture.'),
+(12, FALSE, 2, 6, 'Love your landscape! Here''s a character design I completed recently for a personal project.');
 
--- Populate Posts table (replies)
--- Replies to tech threads
-INSERT INTO posts (board_id, user_id, parent_id, subject, content, image_url, created_at) VALUES
-                                                                                              (1, 5, 1, NULL, 'The official PostgreSQL documentation is actually quite good. Also check out "PostgreSQL: Up and Running" book.', NULL, '2024-04-01 10:15:00'),
-                                                                                              (1, 2, 1, NULL, 'pgAdmin is a great tool to start with. It provides a nice GUI for managing your databases.', NULL, '2024-04-01 11:20:00'),
-                                                                                              (1, 3, 2, NULL, 'Ubuntu is pretty good for beginners. Pop!_OS is also designed with developers in mind.', NULL, '2024-04-02 14:45:00'),
-                                                                                              (1, 5, 2, NULL, 'I personally use Arch Linux, but it has a steeper learning curve. Fedora might be a good middle ground.', NULL, '2024-04-02 15:30:00'),
-                                                                                              (1, 4, 3, NULL, 'Yes, I got one last week! The performance improvements are noticeable, especially for IoT projects.', 'https://example.com/images/pi_project.jpg', '2024-04-03 17:15:00');
-
--- Replies to art threads
-INSERT INTO posts (board_id, user_id, parent_id, subject, content, image_url, created_at) VALUES
-                                                                                              (2, 3, 4, NULL, 'Krita is a great free option. If you can spend some money, Procreate is excellent if you have an iPad.', NULL, '2024-04-01 11:30:00'),
-                                                                                              (2, 6, 5, NULL, 'The colors are beautiful! I love the way you captured the light on the mountains.', NULL, '2024-04-02 19:05:00'),
-                                                                                              (2, 2, 5, NULL, 'This is really impressive. How long did it take you to complete?', NULL, '2024-04-02 20:15:00'),
-                                                                                              (2, 4, 5, NULL, 'Thanks for the kind words! It took about 20 hours over a couple of weeks.', NULL, '2024-04-02 21:30:00');
-
--- Replies to music threads
-INSERT INTO posts (board_id, user_id, parent_id, subject, content, image_url, created_at) VALUES
-                                                                                              (3, 4, 6, NULL, 'Start with basic chords and practice daily, even if just for 15 minutes. Consistency is key.', NULL, '2024-04-03 12:10:00'),
-                                                                                              (3, 5, 6, NULL, 'Justin Guitar has some excellent free lessons online for beginners.', NULL, '2024-04-03 13:45:00'),
-                                                                                              (3, 6, 7, NULL, 'Check out "The Beths" if you haven''t already. Their latest album is fantastic.', NULL, '2024-04-04 16:00:00'),
-                                                                                              (3, 3, 7, NULL, 'I''ve been enjoying "Wet Leg" and "Yard Act" lately. Both have very interesting lyrics.', NULL, '2024-04-04 17:10:00');
-
--- Replies to anime threads
-INSERT INTO posts (board_id, user_id, parent_id, subject, content, image_url, created_at) VALUES
-                                                                                              (4, 4, 8, NULL, '"Bluish Reentry" is my favorite of the season so far. Great animation and story.', NULL, '2024-04-02 14:00:00'),
-                                                                                              (4, 7, 8, NULL, 'I''m enjoying the new season of "Wind Breaker" - solid character development.', NULL, '2024-04-02 15:30:00'),
-                                                                                              (4, 3, 9, NULL, 'Cowboy Bebop is a must-watch classic that still holds up today.', NULL, '2024-04-05 10:45:00'),
-                                                                                              (4, 6, 9, NULL, 'Studio Ghibli films like "Spirited Away" and "Princess Mononoke" are essential viewing.', NULL, '2024-04-05 11:20:00');
-
--- Replies to games threads
-INSERT INTO posts (board_id, user_id, parent_id, subject, content, image_url, created_at) VALUES
-                                                                                              (5, 5, 10, NULL, 'What''s your budget? RTX 4070 is a good mid-range GPU right now, pair it with a Ryzen 7 CPU.', NULL, '2024-04-01 20:30:00'),
-                                                                                              (5, 4, 10, NULL, 'Thanks! Budget is around $1500. I''ll look into those components.', NULL, '2024-04-01 21:15:00'),
-                                                                                              (5, 3, 11, NULL, '"Hollow Knight" is an amazing metroidvania if you haven''t played it yet.', NULL, '2024-04-04 18:00:00'),
-                                                                                              (5, 6, 11, NULL, '"Stardew Valley" may not be underrated anymore, but it''s still one of the best indie games ever made.', NULL, '2024-04-04 19:25:00');
+UPDATE threads t
+SET op_post_id = p.id
+FROM posts p
+WHERE t.id = p.thread_id AND p.is_op = TRUE
