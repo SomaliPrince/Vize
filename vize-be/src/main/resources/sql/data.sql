@@ -4,7 +4,7 @@ TRUNCATE threads RESTART IDENTITY CASCADE;
 
 BEGIN DEFERRABLE;
 
-INSERT INTO boards (board_code, board_name)
+INSERT INTO boards (code, name)
 VALUES ('tech', 'Technology Discussions'),
        ('art', 'Art Showcase');
 

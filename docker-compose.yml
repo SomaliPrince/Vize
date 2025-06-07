@@ -2,7 +2,7 @@ services:
   postgres:
     image: postgres:latest
     container_name: vize_pg
-    restart: always
+    restart: unless-stopped
     environment:
       POSTGRES_USER: root
       POSTGRES_PASSWORD: root
