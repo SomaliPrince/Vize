@@ -4,8 +4,8 @@ import {ref} from "vue";
 
 const threadLength = 8;
 const stats = ref({
-  activeUsers: 1247,
-  totalThreads: 892,
+  activeUsers: 1,
+  activeThreads: 12,
   postsToday: 15439,
   boardsActive: 12
 })
@@ -17,9 +17,9 @@ const stats = ref({
       <h1 class="animate-character">VIZE</h1>
     </div>
 
-    <h1 class="popular-threads">Popular threads</h1>
+    <h2 class="popular-threads-text">Popular threads</h2>
     <div class="threads">
-      <Thread v-for="index in threadLength" :message="threadLength"/>
+      <Thread v-for="index in threadLength" :message="index.toString()"/>
     </div>
     <div class="statistics-box">
       <div class="stats-grid">
@@ -28,7 +28,7 @@ const stats = ref({
           <div class="stat-label">Active Users</div>
         </div>
         <div>
-          <div class="stat-value">{{ stats.totalThreads }}</div>
+          <div class="stat-value">{{ stats.activeThreads }}</div>
           <div class="stat-label">Active Threads</div>
         </div>
         <div>
@@ -63,6 +63,7 @@ const stats = ref({
 </template>
 
 <style lang="sass">
+
 .vize-homepage
   background-color: #fff
   color: #000
@@ -99,24 +100,24 @@ const stats = ref({
   gap: 0.5rem
   margin-bottom: 3rem
 
-.popular-threads
-  margin: 2rem
-  text-align: center
-  text-transform: uppercase
-  background: linear-gradient(90deg, #2563eb, #7dd3fc, #22c55e, #15803d);
-  background-size: 300% 100%
-  background-clip: text
-  -webkit-background-clip: text
-  -webkit-text-fill-color: transparent
-  animation: gradientFlow 3s ease-in-out infinite alternate
-
 .threads
   display: grid
+  align-items: center
+  border: 1px solid black
+  border-radius: 3px
+  padding-top: 1rem
+  padding-bottom: 1rem
   grid-template-columns: repeat(4, 10rem)
   justify-content: center
   gap: 4rem
-  width: 100%
-  border: black
+  width: 50%
+  margin: 0 auto
+
+.popular-threads-text
+  width: 59%
+  color: black
+  text-align: center
+  text-transform: uppercase
 
 .statistics-box
   background-color: #f9fafb

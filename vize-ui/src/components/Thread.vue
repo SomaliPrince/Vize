@@ -10,7 +10,7 @@ const props = defineProps({
     <img class="thread-img" src="https://picsum.photos/400/300" alt="Random image">
     <div class="thread-text">
       <b class="thread-title">{{ message }}:&nbsp;</b>
-      <div class="teaser">My UK visa applcation got rejected</div>
+      <div class="teaser">My UK visa application got rejected</div>
     </div>
   </div>
 </template>
@@ -22,6 +22,7 @@ const props = defineProps({
   display: inline-block
   word-wrap: break-word
   overflow: hidden
+  cursor: grab
 
 .thread-img
   margin: auto
