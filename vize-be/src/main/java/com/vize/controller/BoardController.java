@@ -22,4 +22,9 @@ public class BoardController {
                 .map(Board::code)
                 .toList();
     }
+
+    @GetMapping
+    public Integer countAllPosts() {
+        return board
+    }
 }
