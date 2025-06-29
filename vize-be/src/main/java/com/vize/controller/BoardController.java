@@ -1,9 +1,9 @@
 package com.vize.controller;
 
-import com.vize.domain.Board;
 import com.vize.repo.BoardRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,15 +16,18 @@ public class BoardController {
 
     private final BoardRepository boardRepository;
 
-    @GetMapping
+    @GetMapping("/codes")
     public List<String> getAllBoardCodes() {
-        return boardRepository.findAll().stream()
-                .map(Board::code)
-                .toList();
+        return boardRepository.getBoardCodes();
     }
 
-    @GetMapping
+    @GetMapping("/count")
     public Integer countAllPosts() {
-        return board
+        return boardRepository.countPosts();
+    }
+
+    @GetMapping("/count/{board}")
+    public Integer countPostsPerBoard(@PathVariable("board") String board) {
+        return boardRepository.countPostsPerBoard(board);
     }
 }

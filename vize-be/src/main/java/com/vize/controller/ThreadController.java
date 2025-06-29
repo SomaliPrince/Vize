@@ -1,6 +1,5 @@
 package com.vize.controller;
 
-import com.vize.domain.Board;
 import com.vize.dto.ThreadDTO;
 import com.vize.repo.BoardRepository;
 import lombok.RequiredArgsConstructor;

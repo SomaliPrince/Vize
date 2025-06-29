@@ -15,7 +15,7 @@ function getBoardCodes() {
     loading.value = true
     error.value = null
     try {
-      boardCodes.value = (await API_CLIENT.get(`/boards`)).data
+      boardCodes.value = (await API_CLIENT.get(`/boards/codes`)).data
     } catch (err) {
       console.error('Error fetching board codes:', err)
       error.value = err.response?.data?.message || err.message || 'Failed to fetch board codes.'
