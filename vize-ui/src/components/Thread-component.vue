@@ -1,8 +1,5 @@
 <script setup>
-const size = Array.from({length: 8}, (_, i) => i + 1);
-const props = defineProps({
-  message: String,
-})
+
 </script>
 
 <template>

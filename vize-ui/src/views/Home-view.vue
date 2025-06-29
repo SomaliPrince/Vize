@@ -1,5 +1,5 @@
 <script setup>
-import Thread from '@/components/Thread.vue'
+import ThreadComponent from '@/components/Thread-component.vue'
 import { onMounted, ref } from 'vue'
 import axios from 'axios'
 
@@ -60,7 +60,11 @@ onMounted(() => {
 
     <h2 class="popular-threads-text">Popular threads</h2>
     <div class="threads">
-      <Thread v-for="index in threadLength" :message="index.toString()" />
+      <ThreadComponent
+        v-for="index in threadLength"
+        v-bind:key="index"
+        :message="index.toString()"
+      />
     </div>
     <div class="statistics-box">
       <div class="stats-grid">

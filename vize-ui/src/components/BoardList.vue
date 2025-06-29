@@ -41,10 +41,15 @@ onMounted(() => {
 <template>
   <span class="board-list">
     &#91;
-    <a class="board-code" v-for="(boardCode, index) in boardCodes" :key="boardCode">
+    <router-link
+      class="board-code"
+      v-for="(boardCode, index) in boardCodes"
+      :key="boardCode"
+      :to="{ path: `/${boardCode}` }"
+    >
       {{ boardCode }}
       <code v-if="index < boardCodes.length - 1">&#47;</code>
-    </a>
+    </router-link>
     &#93;
   </span>
 </template>
@@ -58,6 +63,13 @@ onMounted(() => {
   font-size: medium
 
 .board-code
+  text-decoration: none
+  color: black
+  cursor: pointer
   padding-left: 0.25rem
   padding-right: 0.25rem
+
+  &:hover
+    color: #16a34a
+    transition: color 0.2s ease-in-out
 </style>
