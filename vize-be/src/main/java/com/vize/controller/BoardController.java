@@ -21,13 +21,4 @@ public class BoardController {
         return boardRepository.getBoardCodes();
     }
 
-    @GetMapping("/count")
-    public Integer countAllPosts() {
-        return boardRepository.countPosts();
-    }
-
-    @GetMapping("/count/{board}")
-    public Integer countPostsPerBoard(@PathVariable("board") String board) {
-        return boardRepository.countPostsPerBoard(board);
-    }
 }

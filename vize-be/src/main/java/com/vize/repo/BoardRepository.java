@@ -21,11 +21,4 @@ public class BoardRepository {
                 .fetchInto(String.class);
     }
 
-    public Integer countPosts() {
-        return context.fetchCount(Posts.POSTS);
-    }
-
-    public Integer countPostsPerBoard(String board) {
-        return context.fetchCount(Posts.POSTS, Posts.POSTS.BOARD_CODE.eq(board));
-    }
 }

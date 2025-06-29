@@ -1,6 +1,5 @@
 package com.vize.controller;
 
-import com.vize.dto.ThreadDTO;
 import com.vize.repo.BoardRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,10 +13,4 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ThreadController {
 
-    private final BoardRepository boardRepository;
-
-    @GetMapping
-    public List<ThreadDTO> getThreadById() {
-        return null;
-    }
 }

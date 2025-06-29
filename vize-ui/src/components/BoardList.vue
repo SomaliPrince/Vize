@@ -1,9 +1,9 @@
 <script setup>
-import {onMounted, ref} from 'vue'
+import { onMounted, ref } from 'vue'
 import axios from 'axios'
 
 const API_CLIENT = axios.create({
-  baseURL: 'http://localhost:8080'
+  baseURL: 'http://localhost:8080',
 })
 
 function getBoardCodes() {
@@ -27,11 +27,11 @@ function getBoardCodes() {
     boardCodes,
     loading,
     error,
-    fetchBoardCodes
+    fetchBoardCodes,
   }
 }
 
-const {boardCodes, loading, error, fetchBoardCodes} = getBoardCodes()
+const { boardCodes, fetchBoardCodes } = getBoardCodes()
 
 onMounted(() => {
   fetchBoardCodes()
@@ -39,15 +39,14 @@ onMounted(() => {
 </script>
 
 <template>
-<span class="board-list">
-      &#91;
-      <a class="board-code"
-         v-for="(boardCode, index) in boardCodes" :key="boardCode">
-        {{ boardCode }}
-        <code v-if="index < boardCodes.length - 1">&#47;</code>
-      </a>
-      &#93;
-    </span>
+  <span class="board-list">
+    &#91;
+    <a class="board-code" v-for="(boardCode, index) in boardCodes" :key="boardCode">
+      {{ boardCode }}
+      <code v-if="index < boardCodes.length - 1">&#47;</code>
+    </a>
+    &#93;
+  </span>
 </template>
 
 <style scoped lang="sass">
@@ -61,5 +60,4 @@ onMounted(() => {
 .board-code
   padding-left: 0.25rem
   padding-right: 0.25rem
-
 </style>

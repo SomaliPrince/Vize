@@ -1,13 +1,54 @@
 <script setup>
-import Thread from "@/components/Thread.vue";
-import {ref} from "vue";
+import Thread from '@/components/Thread.vue'
+import { onMounted, ref } from 'vue'
+import axios from 'axios'
 
-const threadLength = 8;
+const API_CLIENT = axios.create({
+  baseURL: 'http://localhost:8080',
+})
+
+const threadLength = 8
 const stats = ref({
   activeUsers: 1,
   activeThreads: 12,
-  postsToday: 15439,
-  boardsActive: 12
+})
+
+function initData() {
+  const totalPosts = ref(0)
+  const postsToday = ref(0)
+  const loading = ref(false)
+  const error = ref(null)
+
+  const fetchData = async () => {
+    loading.value = true
+    error.value = null
+    try {
+      const [totalPostsData, postsTodayData] = await Promise.all([
+        API_CLIENT.get('/posts/count'),
+        API_CLIENT.get('/posts/countToday'),
+      ])
+      totalPosts.value = totalPostsData.data
+      postsToday.value = postsTodayData.data
+    } catch (err) {
+      console.error('Error fetching data:', err)
+      error.value = err.response?.data?.message || err.message || 'Failed to fetch data.'
+    } finally {
+      loading.value = false
+    }
+  }
+  return {
+    totalPosts,
+    postsToday,
+    loading,
+    error,
+    fetchData,
+  }
+}
+
+const { totalPosts, postsToday, fetchData } = initData()
+
+onMounted(() => {
+  fetchData()
 })
 </script>
 
@@ -19,7 +60,7 @@ const stats = ref({
 
     <h2 class="popular-threads-text">Popular threads</h2>
     <div class="threads">
-      <Thread v-for="index in threadLength" :message="index.toString()"/>
+      <Thread v-for="index in threadLength" :message="index.toString()" />
     </div>
     <div class="statistics-box">
       <div class="stats-grid">
@@ -32,16 +73,15 @@ const stats = ref({
           <div class="stat-label">Active Threads</div>
         </div>
         <div>
-          <div class="stat-value">{{ stats.postsToday }}</div>
+          <div class="stat-value">{{ postsToday }}</div>
           <div class="stat-label">Posts Today</div>
         </div>
         <div>
-          <div class="stat-value">{{ stats.boardsActive }}</div>
-          <div class="stat-label">Active Boards</div>
+          <div class="stat-value">{{ totalPosts }}</div>
+          <div class="stat-label">Total Posts</div>
         </div>
       </div>
     </div>
-
 
     <footer class="footer">
       <div class="footer-content">
@@ -54,8 +94,10 @@ const stats = ref({
           <a href="#">DMCA</a>
         </div>
         <div class="copyright">
-          <p>&copy; 2025 Vize. All rights reserved. This site is for educational and research
-            purposes.</p>
+          <p>
+            &copy; 2025 Vize. All rights reserved. This site is for educational and research
+            purposes.
+          </p>
         </div>
       </div>
     </footer>
