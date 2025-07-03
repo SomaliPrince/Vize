@@ -7,6 +7,11 @@ export default defineNuxtConfig({
             link: [{rel: 'icon', type: 'image/x-icon', href: '/favicon.png'}]
         }
     },
+    runtimeConfig: {
+        public: {
+            backendUrl: 'http://localhost:8080'
+        }
+    },
     modules: [
         '@nuxt/eslint',
         '@nuxt/fonts',

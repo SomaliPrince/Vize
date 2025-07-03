@@ -1,6 +1,6 @@
 <script setup lang="ts">
-const totalPosts = await useFetch('http://localhost:8080/posts/count')
-const postsToday = await useFetch('http://localhost:8080/posts/countToday')
+const totalPosts = await useFetch(useRuntimeConfig().public.backendUrl.concat('/posts/count'));
+const postsToday = await useFetch(useRuntimeConfig().public.backendUrl.concat('/posts/countToday'));
 const threadLength = 8;
 
 </script>
@@ -106,14 +106,14 @@ const threadLength = 8;
   border-radius: 3px
   padding-top: 1rem
   padding-bottom: 1rem
-  grid-template-columns: repeat(4, 10rem)
+  grid-template-columns: repeat(4, 15rem)
   justify-content: center
   gap: 4rem
-  width: 50%
+  width: 65%
   margin: 0 auto
 
 .popular-threads-text
-  width: 59%
+  width: 44%
   color: black
   text-align: center
   text-transform: uppercase

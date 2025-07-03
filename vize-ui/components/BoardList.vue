@@ -1,10 +1,8 @@
 <script setup lang="ts">
-const codesFetch = await useFetch<string[]>(
-    'http://localhost:8080/boards/codes',
-    {
-      key: 'board-codes'
-    });
-const codes: string[] = codesFetch.data.value || [];
+import type {Board} from "~/types/data";
+
+const codesFetch = await useFetch<Board[]>(useRuntimeConfig().public.backendUrl.concat('/boards'), {key: 'boards'});
+const boards: Board[] = codesFetch.data.value || [];
 
 </script>
 
@@ -19,13 +17,13 @@ const codes: string[] = codesFetch.data.value || [];
     &#91;
     <!--IGNORE THIS WARN-->
     <NuxtLink
-        v-for="(code, index) in codes"
-        :key="code"
-        :to="{ name: 'board', params: { board: code } }"
+        v-for="(board, index) in boards"
+        :key="board.code"
+        :to="{ name: 'board', params: { board: board.code } }"
         external
         class="board-code">
-      {{ code }}
-      <code v-if="index < codes.length - 1">&#47;</code>
+      {{ board.code }}
+      <code v-if="index < boards.length - 1">&#47;</code>
     </NuxtLink>
     &#93;
   </span>
