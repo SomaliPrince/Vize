@@ -1,17 +1,22 @@
 <script setup lang="ts">
 import type {Board, Thread} from "~/types/data";
-import {findBoardByCode} from "~/types/data";
+import {useBoardStore} from "~/stores/boards";
 
-const currentPath: string = useRoute().path;
+const DEFAULT_BOARD: Board = {code: 'def', name: 'Default Board'};
+
+const currentPath: string = useRoute().path.slice(1);
 const threadsFetch = await useFetch<Thread[]>(useRuntimeConfig().public.backendUrl.concat('/threads').concat(currentPath))
 const threads: Thread[] = threadsFetch.data.value || [];
-const board: Board = findBoardByCode(useNuxtData('boards').data.value, currentPath.slice(1));
+const {data, isLoading} = storeToRefs(useBoardStore());
+const board = computed(() =>
+    data.value?.find(board => board.code === currentPath) ?? DEFAULT_BOARD
+);
 </script>
 
 <template>
   <div>
     <div class="header">
-      <h1 class="animate-character">/{{ board.code }}/ - {{ board.name }}</h1>
+      <h1 v-if="!isLoading" class="animate-character">/{{ board.code }}/ - {{ board.name }}</h1>
     </div>
     <h1>{{ currentPath }}</h1>
     <div class="threads">

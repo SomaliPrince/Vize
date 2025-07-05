@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import type {Board} from "~/types/data";
+import {useBoardStore} from "~/stores/boards";
 
-const codesFetch = await useFetch<Board[]>(useRuntimeConfig().public.backendUrl.concat('/boards'), {key: 'boards'});
-const boards: Board[] = codesFetch.data.value || [];
+await useBoardStore().fetchBoardData();
+const boards: Board[] = useBoardStore().getBoardItems;
 
 </script>
 
