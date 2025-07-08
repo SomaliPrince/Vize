@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type {Board, Thread} from "~/types/data";
 import {useBoardStore} from "~/stores/boards";
+import CreateThread from "~/components/CreateThread.vue";
 
 const DEFAULT_BOARD: Board = {code: 'def', name: 'Default Board'};
 
@@ -11,14 +12,27 @@ const {data, isLoading} = storeToRefs(useBoardStore());
 const board = computed(() =>
     data.value?.find(board => board.code === currentPath) ?? DEFAULT_BOARD
 );
+
+const isCreatingThread = ref(false);
 </script>
 
 <template>
   <div>
-    <div class="header">
-      <h1 v-if="!isLoading" class="animate-character">/{{ board.code }}/ - {{ board.name }}</h1>
+    <div class="thread-catalog-header">
+      <img
+          class="thread-catalog-img"
+          src="public/temp-title.png" alt="header">
+      <div v-if="!isLoading" class="thread-catalog-board-list">/{{ board.code }}/ - {{ board.name }}</div>
+      <div v-else class="thread-catalog-board-list">...</div>
     </div>
-    <h1>{{ currentPath }}</h1>
+    <hr style="width: 75%">
+    <div class="create-thread-btn" @click="isCreatingThread = !isCreatingThread">
+      [
+      <span v-if="!isCreatingThread" class="create-thread-btn-text">Start a new thread</span>
+      <span v-else class="create-thread-btn-text">Close</span>
+      ]
+    </div>
+    <CreateThread v-if="isCreatingThread"/>
     <div class="threads">
       <ThreadCard
           v-for="thread in threads"
@@ -36,6 +50,41 @@ const board = computed(() =>
   display: flex
   flex-flow: wrap
   align-items: flex-start
+
+.thread-catalog-header
+  text-align: center
+
+.thread-catalog-img
+  width: 500px
+  height: 150px
+
+.create-thread-btn
+  user-select: none
+  text-align: center
+  font-size: 2rem
+
+.create-thread-btn-text:hover
+  cursor: grab
+  color: green
+
+
+.thread-catalog-board-list
+  font-size: clamp(1rem, 15vw, 3rem)
+  font-weight: 650
+  letter-spacing: 0.05em
+  text-transform: uppercase
+  background: linear-gradient(90deg, #15803d, #22c55e, #7dd3fc, #2563eb)
+  background-size: 300% 100%
+  background-clip: text
+  -webkit-background-clip: text
+  -webkit-text-fill-color: transparent
+  animation: gradientFlow 3s ease-in-out infinite alternate
+
+  @keyframes gradientFlow
+    0%
+      background-position: 0 0
+    100%
+      background-position: 100% 0
 
 .header
   text-align: center
