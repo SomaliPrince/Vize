@@ -1,15 +1,13 @@
 package com.vize.mapper;
 
 import com.vize.dto.BoardDTO;
-import com.vize.dto.ThreadDTO;
 import com.vize.jooq.generated.public_.tables.records.BoardsRecord;
-import org.jooq.RecordMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
 @Mapper
-public interface BoardMapper extends RecordMapper<BoardsRecord, ThreadDTO> {
+public interface BoardMapper {
 
     BoardMapper INSTANCE = Mappers.getMapper(BoardMapper.class);
 

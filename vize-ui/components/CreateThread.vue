@@ -1,17 +1,34 @@
 <script setup lang="ts">
-async function createThread() {
-  useFetch()
+import {useBoardStore} from "~/stores/boards";
+
+const form = reactive({
+      boardCode: String,
+      title: String,
+      content: String
+    }
+)
+
+const currentPath: string = useRoute().path.slice(1);
+const boardStore = useBoardStore()
+const boardCode: string = boardStore.getBoardByCode(currentPath).code;
+
+function createThread() {
+  $fetch(`${useRuntimeConfig().public.backendUrl}/ping`, {
+    method: 'POST',
+    body: form
+  })
 }
 </script>
 
 <template>
-  <form class="create-thread-body" @submit="createThread">
+  <form class="create-thread-body" @submit.prevent="createThread">
     <div class="create-thread-title">
-      <input class="create-thread-title-input" placeholder="title">
+      <input required name="title" class="create-thread-title-input" placeholder="title">
+      <input name="boardCode" hidden :value="boardCode">
       <input class="create-thread-submit" type="submit" placeholder="submit">
     </div>
     <div class="create-thread-text">
-      <textarea class="create-thread-text-input" placeholder="Commentary"/>
+      <textarea required name="content" class="create-thread-text-input" placeholder="Commentary"/>
     </div>
   </form>
 </template>

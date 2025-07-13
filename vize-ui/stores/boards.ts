@@ -2,48 +2,63 @@ import type {Board} from "~/types/data";
 import {defineStore} from "pinia";
 
 interface BoardsState {
-    data: Board[] | null // Initialize as null or empty array
+    data: Board[]
     isLoading: boolean
-    error: any
+    error: string | null
 }
 
 export const useBoardStore = defineStore('boardList', {
     state: (): BoardsState => ({
-        data: null,
+        data: [],
         isLoading: false,
         error: null,
     }),
+
     actions: {
-        async fetchBoardData() {
-            if (this.data || this.isLoading) return this.data
+        async fetchBoardData(forceRefresh = false): Promise<Board[]> {
+            if (this.data.length > 0 && !forceRefresh && !this.isLoading)
+                return this.data
+
+            if (this.isLoading) {
+                while (this.isLoading) await new Promise(resolve => setTimeout(resolve, 50))
+                return this.data
+            }
 
             this.isLoading = true
             this.error = null
+
             try {
+                const {data, error} = await useFetch<Board[]>(
+                    `${useRuntimeConfig().public.backendUrl}/boards`,
+                    {
+                        key: 'boards',
+                        server: true,
+                        default: () => [] as Board[],
+                    }
+                )
+                if (error.value) throw new Error(error.value.message || 'Failed to fetch boards')
 
-                const {data, error}
-                    = await useFetch<Board[]>(useRuntimeConfig().public.backendUrl.concat('/boards'), {
-                    key: 'boards',
-                    server: true,
-                })
-
-                if (error.value) throw error.value
-
-                this.data = data.value
+                this.data = data.value || []
                 return this.data
 
             } catch (e) {
-                this.error = e
+                this.error = e instanceof Error ? e.message : 'Unknown error occurred'
                 console.error('Failed to fetch board data:', e)
-                return null
+                throw e
             } finally {
                 this.isLoading = false
             }
         },
     },
+
     getters: {
-        getBoardItems(state): Board[] {
-            return state.data || []
+        getBoardItems: (state): Board[] => state.data,
+
+        getBoardByCode: (state) => (code: string): Board => {
+            const foundBoard = state.data.find(board => board.code === code)
+            if (!foundBoard)
+                throw new Error(`Board with code "${code}" not found. Available boards: ${state.data.map(b => b.code).join(', ')}`)
+            else return foundBoard
         }
     }
 })

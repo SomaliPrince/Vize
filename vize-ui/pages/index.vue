@@ -1,6 +1,6 @@
 <script setup lang="ts">
-const totalPosts = await useFetch(useRuntimeConfig().public.backendUrl.concat('/posts/count'));
-const postsToday = await useFetch(useRuntimeConfig().public.backendUrl.concat('/posts/countToday'));
+const totalPosts = await useFetch(`${useRuntimeConfig().public.backendUrl}/posts/count`);
+const postsToday = await useFetch(`${useRuntimeConfig().public.backendUrl}/posts/countToday`);
 const threadLength = 8;
 
 </script>

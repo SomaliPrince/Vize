@@ -3,10 +3,6 @@ defineProps({
   title: {
     type: String,
     required: true
-  },
-  id: {
-    type: Number,
-    required: true
   }
 })
 </script>
@@ -23,10 +19,10 @@ defineProps({
         <span> / I: </span>
         <b>mock</b>
         <br>
-        <span>{{title}}</span>
+        <span>{{ title }}</span>
       </div>
       <div class="thread-card-preview">
-        <b class="thread-card-title">{{ id }}: </b>
+        <b class="thread-card-title">xd: </b>
         <span>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut rhoncus eu lorem sed ultricies. Suspendisse commodo, nulla sed suscipit auctor, magna nulla tincidunt nunc, ac fringilla orci mauris vitae quam. Curabitur cursus vestibulum arcu eu efficitur. Phasellus non feugiat turpis. Sed lobortis volutpat sem vitae condimentum. Donec nunc tortor, congue vitae augue eget, varius condimentum diam. Fusce accumsan sem nec massa vulputate sollicitudin. Nullam quis placerat erat.</span>
       </div>
     </div>

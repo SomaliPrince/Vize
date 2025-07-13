@@ -1,19 +1,24 @@
 <script setup lang="ts">
-import type {Board, Thread} from "~/types/data";
+import type {Thread} from "~/types/data";
 import {useBoardStore} from "~/stores/boards";
 import CreateThread from "~/components/CreateThread.vue";
 
-const DEFAULT_BOARD: Board = {code: 'def', name: 'Default Board'};
-
 const currentPath: string = useRoute().path.slice(1);
-const threadsFetch = await useFetch<Thread[]>(useRuntimeConfig().public.backendUrl.concat('/threads').concat(currentPath))
+
+const threadsFetch = await useFetch<Thread[]>(`${useRuntimeConfig().public.backendUrl}/threads${currentPath}`)
 const threads: Thread[] = threadsFetch.data.value || [];
-const {data, isLoading} = storeToRefs(useBoardStore());
-const board = computed(() =>
-    data.value?.find(board => board.code === currentPath) ?? DEFAULT_BOARD
-);
+const boardStore = useBoardStore()
 
 const isCreatingThread = ref(false);
+
+await useAsyncData(
+    async () => {
+      await boardStore.fetchBoardData();
+      return boardStore.getBoardByCode(currentPath)
+    }
+);
+
+const board = computed(() => boardStore.getBoardByCode(currentPath))
 </script>
 
 <template>
@@ -22,8 +27,7 @@ const isCreatingThread = ref(false);
       <img
           class="thread-catalog-img"
           src="public/temp-title.png" alt="header">
-      <div v-if="!isLoading" class="thread-catalog-board-list">/{{ board.code }}/ - {{ board.name }}</div>
-      <div v-else class="thread-catalog-board-list">...</div>
+      <div class="thread-catalog-board-list">/{{ board.code }}/ - {{ board.name }}</div>
     </div>
     <hr style="width: 75%">
     <div class="create-thread-btn" @click="isCreatingThread = !isCreatingThread">
@@ -61,7 +65,7 @@ const isCreatingThread = ref(false);
 .create-thread-btn
   user-select: none
   text-align: center
-  font-size: 2rem
+  font-size: 1.5rem
 
 .create-thread-btn-text:hover
   cursor: grab
