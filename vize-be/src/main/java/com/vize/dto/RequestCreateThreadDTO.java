@@ -1,9 +1,17 @@
 package com.vize.dto;
 
-public record RequestCreateThreadDTO(
-        String boardCode,
-        String title,
-        String content
+import com.vize.validation.ExistingBoard;
+import jakarta.validation.constraints.NotBlank;
 
+public record RequestCreateThreadDTO(
+        @NotBlank
+        @ExistingBoard
+        String boardCode,
+
+        @NotBlank
+        String title,
+
+        @NotBlank
+        String content
 ) {
 }

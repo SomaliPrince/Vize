@@ -11,17 +11,17 @@ VALUES ('pol', 'Politics'),
        ('tech', 'Technology'),
        ('g', 'General Discussion');
 
-INSERT INTO threads (id, board_code, title)
-VALUES (1, 'pol', 'Discussion on recent election results'),
-       (2, 'pol', 'Impact of climate policy on global relations'),
-       (3, 'biz', 'Current stock market trends'),
-       (4, 'biz', 'Future of remote work and its economic impact'),
-       (5, 'mu', 'Favorite albums of the 90s'),
-       (6, 'mu', 'New artists to watch in indie pop'),
-       (7, 'tech', 'Why AI might be more hype than help'),
-       (8, 'tech', 'Best programming languages for web development in 2024'),
-       (9, 'g', 'Share your favorite hobby!'),
-       (10, 'g', 'Recommendations for good non-fiction books');
+INSERT INTO threads (board_code, title)
+VALUES ('pol', 'Discussion on recent election results'),
+       ('pol', 'Impact of climate policy on global relations'),
+       ('biz', 'Current stock market trends'),
+       ('biz', 'Future of remote work and its economic impact'),
+       ('mu', 'Favorite albums of the 90s'),
+       ('mu', 'New artists to watch in indie pop'),
+       ('tech', 'Why AI might be more hype than help'),
+       ('tech', 'Best programming languages for web development in 2024'),
+       ('g', 'Share your favorite hobby!'),
+       ('g', 'Recommendations for good non-fiction books');
 
 INSERT INTO posts (board_code, thread_id, content)
 VALUES ('pol', 1, 'Very interesting to see the voter turnout this year.'),

@@ -4,6 +4,7 @@ import com.vize.dto.RequestCreateThreadDTO;
 import com.vize.dto.ResponseThreadDTO;
 import com.vize.repo.ThreadRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,7 +22,7 @@ public class ThreadController {
     }
 
     @PostMapping
-    public void createThread(@RequestBody RequestCreateThreadDTO threadDTO) {
+    public void createThread(@RequestBody @Validated RequestCreateThreadDTO threadDTO) {
         threadRepository.createThread(threadDTO);
     }
 }

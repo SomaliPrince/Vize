@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+import static com.vize.jooq.generated.public_.tables.Posts.POSTS;
 import static com.vize.jooq.generated.public_.tables.Threads.THREADS;
 
 @Repository
@@ -25,10 +26,9 @@ public class ThreadRepository {
     }
 
     public void createThread(RequestCreateThreadDTO requestThreadDTO) {
-//        context.insertInto(POSTS, POSTS.BOARD_CODE, POSTS.THREAD_ID, POSTS.CONTENT)
-//                .values()
-//        context.insertInto(THREADS, THREADS.)
-//                .columns(THREADS.TITLE).values(requestThreadDTO.title());
-
+        Integer threadId = context.insertInto(THREADS, THREADS.BOARD_CODE, THREADS.TITLE)
+                .values(requestThreadDTO.boardCode(), requestThreadDTO.title()).returning(THREADS.ID).execute();
+        context.insertInto(POSTS, POSTS.BOARD_CODE, POSTS.THREAD_ID, POSTS.CONTENT)
+                .values(requestThreadDTO.boardCode(), threadId, requestThreadDTO.content()).execute();
     }
 }

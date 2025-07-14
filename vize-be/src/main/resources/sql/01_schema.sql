@@ -10,7 +10,7 @@ CREATE TABLE boards
 
 CREATE TABLE threads
 (
-    id         INTEGER PRIMARY KEY,
+    id         SERIAL PRIMARY KEY,
     board_code VARCHAR(5)   NOT NULL REFERENCES boards (code) ON DELETE RESTRICT,
     title      VARCHAR(100) NOT NULL
 );
