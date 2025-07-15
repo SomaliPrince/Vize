@@ -8,22 +8,22 @@ CREATE TABLE boards
     name VARCHAR(100) NOT NULL UNIQUE
 );
 
-CREATE TABLE threads
-(
-    id         SERIAL PRIMARY KEY,
-    board_code VARCHAR(5)   NOT NULL REFERENCES boards (code) ON DELETE RESTRICT,
-    title      VARCHAR(100) NOT NULL
-);
-
 CREATE TABLE posts
 (
     id         INTEGER,
     board_code VARCHAR(5) NOT NULL REFERENCES boards (code) ON DELETE RESTRICT,
-    thread_id  INTEGER REFERENCES threads (id) ON DELETE CASCADE,
-    content    TEXT       NOT NULL,
+    comment    TEXT       NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id, board_code)
 );
 
-CREATE INDEX IF NOT EXISTS idx_posts_parent ON posts (id);
-CREATE INDEX IF NOT EXISTS idx_posts_thread ON threads (id);
+CREATE TABLE threads
+(
+    post_id    INTEGER,
+    board_code VARCHAR(5)   NOT NULL REFERENCES boards (code) ON DELETE RESTRICT,
+    name       VARCHAR(100) NOT NULL,
+    PRIMARY KEY (post_id, board_code),
+    FOREIGN KEY (post_id, board_code) REFERENCES posts (id, board_code) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_posts_id ON posts (id);

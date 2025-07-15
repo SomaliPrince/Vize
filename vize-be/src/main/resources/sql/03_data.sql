@@ -2,50 +2,38 @@ TRUNCATE posts RESTART IDENTITY CASCADE;
 TRUNCATE boards RESTART IDENTITY CASCADE;
 TRUNCATE threads RESTART IDENTITY CASCADE;
 
-BEGIN DEFERRABLE;
-
 INSERT INTO boards (code, name)
 VALUES ('pol', 'Politics'),
        ('biz', 'Business & Finance'),
        ('mu', 'Music'),
        ('tech', 'Technology'),
-       ('g', 'General Discussion');
+       ('g', 'General Discussion'),
+       ('test', 'Escape Board');
 
-INSERT INTO threads (board_code, title)
-VALUES ('pol', 'Discussion on recent election results'),
-       ('pol', 'Impact of climate policy on global relations'),
-       ('biz', 'Current stock market trends'),
-       ('biz', 'Future of remote work and its economic impact'),
-       ('mu', 'Favorite albums of the 90s'),
-       ('mu', 'New artists to watch in indie pop'),
-       ('tech', 'Why AI might be more hype than help'),
-       ('tech', 'Best programming languages for web development in 2024'),
-       ('g', 'Share your favorite hobby!'),
-       ('g', 'Recommendations for good non-fiction books');
+INSERT INTO posts (board_code, comment)
+VALUES ('pol', 'Thoughts on the recent parliamentary debate? Seems like a lot of back and forth.'),
+       ('pol', 'I read an interesting article on local election turnout. What are your predictions for next year?'),
+       ('pol', 'Is anyone else concerned about the proposed changes to the healthcare bill?'),
 
-INSERT INTO posts (board_code, thread_id, content)
-VALUES ('pol', 1, 'Very interesting to see the voter turnout this year.'),
-       ('pol', 1, 'I think the new government will face significant challenges.'),
-       ('pol', 1, 'The public reaction has been quite mixed, as expected.');
+       ('biz', 'The market volatility this week has been wild. Anyone making big moves?'),
+       ('biz', 'Just started looking into passive income streams. Any success stories or warnings?'),
+       ('biz', 'Heard about that new startup getting massive funding. What do you think of their business model?'),
 
-INSERT INTO posts (board_code, thread_id, content)
-VALUES ('biz', 3, 'The tech sector seems to be recovering steadily.'),
-       ('biz', 3, 'Concerns about inflation are still present, though.'),
-       ('biz', 3, 'What are your predictions for the next quarter?');
+       ('mu', 'Discovered a fantastic new indie band today. Their sound is so unique!'),
+       ('mu', 'What album are you currently listening to on repeat? Need some new recommendations.'),
+       ('mu', 'Attended a live concert last night; the energy was incredible!'), -- Corrected grammar here
 
-INSERT INTO posts (board_code, thread_id, content)
-VALUES ('mu', 5, 'Nirvana''s Nevermind is a timeless classic.'),
-       ('mu', 5, 'I also love "The Miseducation of Lauryn Hill".'),
-       ('mu', 5, 'Don''t forget Radiohead''s "OK Computer"!');
+       ('tech', 'My new gadget just arrived! Still figuring out all the features, but it''s pretty cool.'),
+       ('tech', 'Anyone else having trouble with their internet provider lately? Connection keeps dropping.'),
+       ('tech', 'Just finished a coding project. The satisfaction of seeing it work is unmatched.'),
 
-INSERT INTO posts (board_code, thread_id, content)
-VALUES ('tech', 7, 'The ethical considerations of AI are becoming more pressing.'),
-       ('tech', 7, 'Excited to see the progress in quantum computing.'),
-       ('tech', 7, 'What are the practical applications we can expect soon?');
+       ('g', 'Had the most bizarre dream last night. It involved flying squirrels and a talking teapot.'),
+       ('g', 'What''s your go-to comfort food after a long day? Mine is definitely pizza.'),
+       ('g', 'Planning a weekend trip. Any suggestions for a relaxing getaway spot?');
 
-INSERT INTO posts (board_code, thread_id, content)
-VALUES ('g', 9, 'I''ve recently gotten into woodworking, it''s very therapeutic.'),
-       ('g', 9, 'For me, it''s always been reading and hiking.'),
-       ('g', 9, 'Anyone into board games?');
-
-COMMIT;
+INSERT INTO threads (post_id, board_code, name)
+VALUES (1, 'pol', 'Current Political Climate'),
+       (1, 'biz', 'Market & Investment Talk'),
+       (1, 'mu', 'New Music Discoveries'),
+       (1, 'tech', 'Gadgets & Connectivity'),
+       (1, 'g', 'Random Daily Thoughts');

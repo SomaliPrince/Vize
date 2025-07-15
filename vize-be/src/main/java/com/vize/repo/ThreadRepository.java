@@ -26,9 +26,13 @@ public class ThreadRepository {
     }
 
     public void createThread(RequestCreateThreadDTO requestThreadDTO) {
-        Integer threadId = context.insertInto(THREADS, THREADS.BOARD_CODE, THREADS.TITLE)
-                .values(requestThreadDTO.boardCode(), requestThreadDTO.title()).returning(THREADS.ID).execute();
-        context.insertInto(POSTS, POSTS.BOARD_CODE, POSTS.THREAD_ID, POSTS.CONTENT)
-                .values(requestThreadDTO.boardCode(), threadId, requestThreadDTO.content()).execute();
+        Integer postId = context.insertInto(POSTS, POSTS.BOARD_CODE, POSTS.COMMENT)
+                .values(requestThreadDTO.boardCode(), requestThreadDTO.comment())
+                .returningResult(POSTS.ID)
+                .fetchOne()
+                .into(Integer.class);
+
+        context.insertInto(THREADS, THREADS.POST_ID, THREADS.BOARD_CODE, THREADS.NAME)
+                .values(postId, requestThreadDTO.boardCode(), requestThreadDTO.name()).execute();
     }
 }

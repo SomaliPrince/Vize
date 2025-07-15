@@ -11,7 +11,7 @@ public interface ThreadMapper {
 
     ThreadMapper INSTANCE = Mappers.getMapper(ThreadMapper.class);
 
-    @Mapping(expression = "java(thread.getTitle())", target = "title")
-    @Mapping(expression = "java(thread.getId())", target = "id")
+    @Mapping(expression = "java(thread.getName())", target = "name")
+    @Mapping(expression = "java(thread.getPostId())", target = "id")
     ResponseThreadDTO threadRecordToResponseDto(ThreadsRecord thread);
 }

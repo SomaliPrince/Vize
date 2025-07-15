@@ -9,9 +9,9 @@ public record RequestCreateThreadDTO(
         String boardCode,
 
         @NotBlank
-        String title,
+        String name,
 
         @NotBlank
-        String content
+        String comment
 ) {
 }

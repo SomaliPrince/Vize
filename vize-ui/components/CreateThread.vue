@@ -7,8 +7,8 @@ const boardCode: string = boardStore.getBoardByCode(currentPath).code;
 
 const form = ref({
       boardCode: boardCode,
-      title: '',
-      content: ''
+      name: '',
+      comment: ''
     }
 )
 
@@ -23,11 +23,11 @@ function createThread() {
 <template>
   <form class="create-thread-body" @submit.prevent="createThread">
     <div class="create-thread-title">
-      <input v-model="form.title" required class="create-thread-title-input" placeholder="title">
-      <input class="create-thread-submit" type="submit" placeholder="submit">
+      <input v-model="form.name" required class="create-thread-title-input" placeholder="title">
+      <button class="create-thread-submit" type="submit">Submit</button>
     </div>
     <div class="create-thread-text">
-      <textarea v-model="form.content" required class="create-thread-text-input" placeholder="Commentary"/>
+      <textarea v-model="form.comment" required class="create-thread-text-input" placeholder="Commentary"/>
     </div>
   </form>
 </template>
@@ -50,6 +50,9 @@ function createThread() {
 
 .create-thread-submit
   width: 25%
+  margin: 0
+  padding: 3px
+  font-size: 15px
 
 .create-thread-text-input
   height: 2rem
