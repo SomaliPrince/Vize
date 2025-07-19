@@ -16,7 +16,8 @@ const threadLength = 8;
       <ThreadCard
           v-for="index in threadLength"
           :key="index"
-          :title="index.toString()"
+          :name="'strqweqwe'"
+          :comment="'index'"
       />
     </div>
     <div class="statistics-box">

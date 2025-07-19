@@ -1,6 +1,10 @@
 <script setup lang="ts">
 defineProps({
-  title: {
+  name: {
+    type: String,
+    required: true
+  },
+  comment: {
     type: String,
     required: true
   }
@@ -19,11 +23,11 @@ defineProps({
         <span> / I: </span>
         <b>mock</b>
         <br>
-        <span>{{ title }}</span>
+        <span>{{ name }}</span>
       </div>
       <div class="thread-card-preview">
         <b class="thread-card-title">xd: </b>
-        <span>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut rhoncus eu lorem sed ultricies. Suspendisse commodo, nulla sed suscipit auctor, magna nulla tincidunt nunc, ac fringilla orci mauris vitae quam. Curabitur cursus vestibulum arcu eu efficitur. Phasellus non feugiat turpis. Sed lobortis volutpat sem vitae condimentum. Donec nunc tortor, congue vitae augue eget, varius condimentum diam. Fusce accumsan sem nec massa vulputate sollicitudin. Nullam quis placerat erat.</span>
+        <span>{{ comment }}</span>
       </div>
     </div>
   </div>

@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import type {Thread} from "~/types/data";
 import {useBoardStore} from "~/stores/boards";
-import CreateThread from "~/components/CreateThread.vue";
 
 const currentPath: string = useRoute().path.slice(1);
+const {
+  data: threadsFetch,
+  refresh: refreshThreads
+} = await useFetch<Thread[]>(`${useRuntimeConfig().public.backendUrl}/threads/${currentPath}`)
 
-const threadsFetch = await useFetch<Thread[]>(`${useRuntimeConfig().public.backendUrl}/threads${currentPath}`)
-const threads: Thread[] = threadsFetch.data.value || [];
 const boardStore = useBoardStore()
-
 const isCreatingThread = ref(false);
 
 await useAsyncData(
@@ -19,6 +19,23 @@ await useAsyncData(
 );
 
 const board = computed(() => boardStore.getBoardByCode(currentPath))
+const threads = computed<Thread[]>(() => threadsFetch.value || []);
+
+const form = ref({
+      boardCode: board.value.code,
+      name: '',
+      comment: ''
+    }
+)
+
+function createThread() {
+  $fetch(`${useRuntimeConfig().public.backendUrl}/threads`, {
+    method: 'POST',
+    body: form.value
+  })
+  isCreatingThread.value = false;
+  refreshThreads();
+}
 </script>
 
 <template>
@@ -36,13 +53,22 @@ const board = computed(() => boardStore.getBoardByCode(currentPath))
       <span v-else class="create-thread-btn-text">Close</span>
       ]
     </div>
-    <CreateThread v-if="isCreatingThread"/>
-    <div class="threads">
+    <form v-if="isCreatingThread" class="create-thread-body" @submit.prevent="createThread">
+      <div class="create-thread-title">
+        <input v-model="form.name" required class="create-thread-title-input" placeholder="title">
+        <button class="create-thread-submit" type="submit">Submit</button>
+      </div>
+      <div class="create-thread-text">
+        <textarea v-model="form.comment" required class="create-thread-text-input" placeholder="Commentary"/>
+      </div>
+    </form>
+    <div class="thread-catalog-threads">
       <ThreadCard
           v-for="thread in threads"
           :id="thread.id"
           :key="thread.id"
-          :title="thread.title"
+          :name="thread.name"
+          :comment="thread.comment"
       />
     </div>
   </div>
@@ -114,4 +140,31 @@ const board = computed(() => boardStore.getBoardByCode(currentPath))
   p
     font-size: 1.125rem
     color: #4b5563
+
+.create-thread-body
+  width: 20rem
+  margin: 1rem auto
+  justify-content: center
+  text-align: center
+
+.create-thread-title
+  display: flex
+  align-items: center
+
+.create-thread-title-input
+  margin-right: 5px
+  height: 1.5rem
+  width: 75%
+
+.create-thread-submit
+  width: 25%
+  margin: 0
+  padding: 3px
+  font-size: 15px
+
+.create-thread-text-input
+  height: 2rem
+
+.create-thread-title-input, .create-thread-text-input
+  width: 20rem
 </style>

@@ -5,5 +5,7 @@ export interface Board {
 
 export interface Thread {
     id: number;
-    title: string;
+    name: string;
+    comment: string;
+    createdAt: Date;
 }
