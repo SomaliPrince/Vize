@@ -1,21 +1,20 @@
 <script setup lang="ts">
-defineProps({
-  name: {
-    type: String,
-    required: true
-  },
-  comment: {
-    type: String,
-    required: true
-  }
-})
+import type {Thread} from "~/types/data";
+
+defineProps<{
+  thread: Thread;
+  boardCode: string;
+}>();
+
 </script>
 
 <template>
   <div class="thread-body">
-    <div class="thread-card-img-box">
+    <NuxtLink
+        :to="{ name: 'code-threads-id', params: { code: boardCode, id: thread.id } }"
+        class="thread-card-img-box">
       <img class="thread-card-img" src="https://picsum.photos/200/200" alt="Random image">
-    </div>
+    </NuxtLink>
     <div class="thread-card-info">
       <div class="thread-card-meta">
         <span>R: </span>
@@ -23,11 +22,11 @@ defineProps({
         <span> / I: </span>
         <b>mock</b>
         <br>
-        <span>{{ name }}</span>
+        <span>{{ thread.name }}</span>
       </div>
       <div class="thread-card-preview">
         <b class="thread-card-title">xd: </b>
-        <span>{{ comment }}</span>
+        <span>{{ thread.comment }}</span>
       </div>
     </div>
   </div>

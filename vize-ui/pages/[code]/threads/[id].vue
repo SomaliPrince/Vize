@@ -3,7 +3,9 @@
 </script>
 
 <template>
-
+  <div>
+    QWEOQWPOJQPWO
+  </div>
 </template>
 
 <style scoped lang="sass">

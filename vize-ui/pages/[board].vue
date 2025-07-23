@@ -28,13 +28,13 @@ const form = ref({
     }
 )
 
-function createThread() {
-  $fetch(`${useRuntimeConfig().public.backendUrl}/threads`, {
+async function createThread() {
+  await $fetch(`${useRuntimeConfig().public.backendUrl}/threads`, {
     method: 'POST',
     body: form.value
   })
   isCreatingThread.value = false;
-  refreshThreads();
+  await refreshThreads();
 }
 </script>
 
@@ -62,13 +62,14 @@ function createThread() {
         <textarea v-model="form.comment" required class="create-thread-text-input" placeholder="Commentary"/>
       </div>
     </form>
+
     <div class="thread-catalog-threads">
       <ThreadCard
           v-for="thread in threads"
           :id="thread.id"
           :key="thread.id"
-          :name="thread.name"
-          :comment="thread.comment"
+          :thread="thread"
+          :board-code="board.code"
       />
     </div>
   </div>
