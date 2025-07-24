@@ -8,22 +8,24 @@ CREATE TABLE boards
     name VARCHAR(100) NOT NULL UNIQUE
 );
 
-CREATE TABLE posts
+CREATE TABLE threads
 (
     id         INTEGER,
-    board_code VARCHAR(5) NOT NULL REFERENCES boards (code) ON DELETE RESTRICT,
-    comment    TEXT       NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    board_code VARCHAR(5)   NOT NULL REFERENCES boards (code) ON DELETE RESTRICT,
+    name       VARCHAR(100) NOT NULL,
     PRIMARY KEY (id, board_code)
 );
 
-CREATE TABLE threads
+CREATE TABLE posts
 (
-    post_id    INTEGER,
-    board_code VARCHAR(5)   NOT NULL REFERENCES boards (code) ON DELETE RESTRICT,
-    name       VARCHAR(100) NOT NULL,
-    PRIMARY KEY (post_id, board_code),
-    FOREIGN KEY (post_id, board_code) REFERENCES posts (id, board_code) ON DELETE CASCADE
+    id         INTEGER,
+    thread_id  INTEGER,
+    is_op      BOOLEAN GENERATED ALWAYS AS (id = thread_id) STORED,
+    board_code VARCHAR(5) NOT NULL REFERENCES boards (code) ON DELETE RESTRICT,
+    comment    TEXT       NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id, board_code),
+    FOREIGN KEY (thread_id, board_code) REFERENCES posts (id, board_code) ON DELETE RESTRICT
 );
 
 CREATE INDEX IF NOT EXISTS idx_posts_id ON posts (id);

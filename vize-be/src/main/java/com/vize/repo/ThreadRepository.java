@@ -21,25 +21,26 @@ public class ThreadRepository {
     public List<ResponseThreadDTO> getThreads(String code) {
         //Order inside select must match fetch target DTO
         return context.select(
-                        THREADS.POST_ID.as("id"),
+                        THREADS.ID.as("id"),
                         POSTS.COMMENT.as("comment"),
                         THREADS.NAME.as("name"),
                         POSTS.CREATED_AT.as("createdAt"))
                 .from(THREADS)
                 .join(POSTS)
-                .on(THREADS.POST_ID.eq(POSTS.ID).and(POSTS.BOARD_CODE.eq(code)))
+                .on(THREADS.ID.eq(POSTS.ID).and(POSTS.BOARD_CODE.eq(code)))
                 .where(THREADS.BOARD_CODE.eq(code))
                 .fetch()
                 .map(Records.mapping(ResponseThreadDTO::new));
     }
 
     public void createThread(RequestCreateThreadDTO requestThreadDTO) {
-        Integer postId = context.insertInto(POSTS, POSTS.BOARD_CODE, POSTS.COMMENT)
-                .values(requestThreadDTO.boardCode(), requestThreadDTO.comment())
-                .returningResult(POSTS.ID)
-                .fetchOneInto(Integer.class);
+        String sequence = requestThreadDTO.boardCode().concat("_seq");
+        var nextval = context.dsl().nextval(sequence).intValue();
 
-        context.insertInto(THREADS, THREADS.POST_ID, THREADS.BOARD_CODE, THREADS.NAME)
-                .values(postId, requestThreadDTO.boardCode(), requestThreadDTO.name()).execute();
+        context.insertInto(THREADS, THREADS.ID, THREADS.BOARD_CODE, THREADS.NAME)
+                .values(nextval, requestThreadDTO.boardCode(), requestThreadDTO.name()).execute();
+
+        context.insertInto(POSTS, POSTS.ID, POSTS.THREAD_ID, POSTS.BOARD_CODE, POSTS.COMMENT)
+                .values(nextval, nextval, requestThreadDTO.boardCode(), requestThreadDTO.comment()).execute();
     }
 }
