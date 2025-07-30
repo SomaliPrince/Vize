@@ -3,9 +3,14 @@ export interface Board {
     name: string;
 }
 
-export interface Thread {
+export interface Post {
     id: number;
-    name: string;
     comment: string;
     createdAt: Date;
+}
+
+export interface Thread {
+    id: number;
+    name: string
+    posts: Post[];
 }

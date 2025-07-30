@@ -2,9 +2,8 @@ package com.vize.dto;
 
 import java.time.LocalDateTime;
 
-public record ResponseThreadDTO(
+public record PostDTO(
         Integer id,
-        String name,
         String comment,
         LocalDateTime createdAt
 ) {

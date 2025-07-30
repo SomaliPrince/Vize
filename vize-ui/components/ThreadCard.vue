@@ -26,7 +26,7 @@ defineProps<{
       </div>
       <div class="thread-card-preview">
         <b class="thread-card-title">xd: </b>
-        <span>{{ thread.comment }}</span>
+        <span>{{ thread.posts.at(0)?.comment }}</span>
       </div>
     </div>
   </div>

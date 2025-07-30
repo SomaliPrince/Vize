@@ -1,7 +1,9 @@
 package com.vize.repo;
 
+import com.vize.dto.PostDTO;
 import com.vize.dto.RequestCreateThreadDTO;
-import com.vize.dto.ResponseThreadDTO;
+import com.vize.dto.ResponseFullThreadDTO;
+import com.vize.dto.ResponseThreadCardDTO;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
 import org.jooq.Records;
@@ -11,6 +13,7 @@ import java.util.List;
 
 import static com.vize.jooq.generated.public_.tables.Posts.POSTS;
 import static com.vize.jooq.generated.public_.tables.Threads.THREADS;
+import static org.jooq.impl.DSL.multisetAgg;
 
 @Repository
 @RequiredArgsConstructor
@@ -18,7 +21,7 @@ public class ThreadRepository {
 
     private final DSLContext context;
 
-    public List<ResponseThreadDTO> getThreads(String code) {
+    public List<ResponseThreadCardDTO> getThreadCards(String code) {
         //Order inside select must match fetch target DTO
         return context.select(
                         THREADS.ID.as("id"),
@@ -30,7 +33,21 @@ public class ThreadRepository {
                 .on(THREADS.ID.eq(POSTS.ID).and(POSTS.BOARD_CODE.eq(code)))
                 .where(THREADS.BOARD_CODE.eq(code))
                 .fetch()
-                .map(Records.mapping(ResponseThreadDTO::new));
+                .map(Records.mapping(ResponseThreadCardDTO::new));
+    }
+
+    public List<ResponseFullThreadDTO> getThreads(String code) {
+        return context.select(
+                        THREADS.ID.as("id"),
+                        THREADS.NAME.as("name"),
+                        multisetAgg(POSTS.ID, POSTS.COMMENT, POSTS.CREATED_AT)
+//                                .orderBy(POSTS.CREATED_AT.desc())
+                                .convertFrom(x -> x.map(Records.mapping(PostDTO::new))))
+                .from(THREADS)
+                .join(POSTS).on(THREADS.ID.eq(POSTS.THREAD_ID).and(POSTS.BOARD_CODE.eq(code)))
+                .where(THREADS.BOARD_CODE.eq(code))
+                .groupBy(THREADS.ID, THREADS.BOARD_CODE, THREADS.NAME)
+                .fetch(Records.mapping(ResponseFullThreadDTO::new));
     }
 
     public void createThread(RequestCreateThreadDTO requestThreadDTO) {

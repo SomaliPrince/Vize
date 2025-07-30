@@ -1,7 +1,7 @@
 package com.vize.controller;
 
 import com.vize.dto.RequestCreateThreadDTO;
-import com.vize.dto.ResponseThreadDTO;
+import com.vize.dto.ResponseFullThreadDTO;
 import com.vize.repo.ThreadRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
@@ -17,7 +17,7 @@ public class ThreadController {
     private final ThreadRepository threadRepository;
 
     @GetMapping("/{code}")
-    public List<ResponseThreadDTO> getThreadsByBoard(@PathVariable String code) {
+    public List<ResponseFullThreadDTO> getThreadsByBoard(@PathVariable String code) {
         return threadRepository.getThreads(code);
     }
 
