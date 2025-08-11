@@ -1,5 +1,5 @@
 import {defineStore} from 'pinia';
-import type {Thread} from "~/types/data";
+import type {CreatePost, OpPost, Post, Thread} from "~/types/data";
 
 export interface ThreadsState {
     threads: Thread[];
@@ -16,6 +16,18 @@ export const useThreadStore = defineStore('threads', {
         data: {}
     }),
     actions: {
+        async createPost(post: CreatePost): Promise<void> {
+            try {
+                const createdPost: Post = await $fetch<Post>(`${useRuntimeConfig().public.backendUrl}/posts`, {
+                    method: 'POST',
+                    body: post
+                })
+                this.data[post.board]?.threads.find(t => t.id === post.threadId)?.posts.push(createdPost);
+            } catch (error) {
+                console.error('Failed to add post:', error);
+                throw error;
+            }
+        },
         async fetchThreads(boardCode: string): Promise<void> {
             if (!this.data[boardCode]) {
                 this.data[boardCode] = {threads: [], isLoading: false, error: null};
@@ -24,7 +36,6 @@ export const useThreadStore = defineStore('threads', {
                 console.log(`Fetch for board ${boardCode} already in progress.`);
                 return;
             }
-
             this.data[boardCode].isLoading = true;
             this.data[boardCode].error = null;
 
@@ -40,31 +51,41 @@ export const useThreadStore = defineStore('threads', {
                 if (error.value) throw new Error(error.value.message || 'Failed to fetch threads')
 
                 this.data[boardCode].threads = data.value;
-            } catch (e) {
-                this.data[boardCode].error = e instanceof Error ? e.message : 'Unknown error occurred'
-                console.error('Failed to fetch thread data:', e)
-                throw e
+            } catch (error) {
+                this.data[boardCode].error = error instanceof Error ? error.message : 'Unknown error occurred'
+                console.error('Failed to fetch thread data:', error)
+                throw error
             } finally {
                 this.data[boardCode].isLoading = false
             }
         }
     },
     getters: {
-        getThreadsByBoard: (state) => (boardId: string): Thread[] => {
-            return state.data[boardId]?.threads || [];
+        getThreadPostsOnBoard: (state) => (boardId: string, threadId: number): Post[] => {
+            const foundThread = state.data[boardId]?.threads.find(t => t.id === threadId);
+            if (!foundThread) throw new Error(`Thread with id ${threadId} not found`);
+
+            return foundThread.posts.toSpliced(0, 1)
         },
 
-        getThreadOnBoard: (state) => (boardId: string, threadId: number): Thread | undefined => {
-            return state.data[boardId]?.threads.find(t => t.id === threadId);
-        },
+        getThreadOpPostOnBoard: (state) => (boardId: string, threadId: number): OpPost => {
+            const thread = state.data[boardId]?.threads.find(t => t.id === threadId);
 
+            if (!thread) throw new Error(`Thread with id ${threadId} not found`);
+
+            const firstPost = thread.posts.at(0);
+            if (!firstPost) throw new Error(`Thread ${threadId} has no posts`);
+
+            return {
+                id: thread.id,
+                comment: firstPost.comment,
+                createdAt: firstPost.createdAt,
+                name: thread.name
+            };
+        },
         isBoardLoading: (state) => (boardId: string): boolean => {
             return state.data[boardId]?.isLoading || false;
         },
-
-        getBoardError: (state) => (boardId: string): string | null => {
-            return state.data[boardId]?.error || null;
-        }
     },
 
 })

@@ -1,14 +1,15 @@
 package com.vize.repo;
 
-import com.vize.dto.PostDTO;
 import com.vize.dto.RequestCreateThreadDTO;
 import com.vize.dto.ResponseFullThreadDTO;
+import com.vize.dto.ResponsePostDTO;
 import com.vize.dto.ResponseThreadCardDTO;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
 import org.jooq.Records;
 import org.springframework.stereotype.Repository;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static com.vize.jooq.generated.public_.tables.Posts.POSTS;
@@ -41,8 +42,12 @@ public class ThreadRepository {
                         THREADS.ID.as("id"),
                         THREADS.NAME.as("name"),
                         multisetAgg(POSTS.ID, POSTS.COMMENT, POSTS.CREATED_AT)
-//                                .orderBy(POSTS.CREATED_AT.desc())
-                                .convertFrom(x -> x.map(Records.mapping(PostDTO::new))))
+                                .orderBy(POSTS.ID.asc())
+                                .convertFrom(x -> x.map(record -> new ResponsePostDTO(
+                                        record.component1(),
+                                        record.component2(),
+                                        record.component3().format(DateTimeFormatter.ofPattern("MM/dd/yy(EEE)HH:mm:ss"))
+                                ))))
                 .from(THREADS)
                 .join(POSTS).on(THREADS.ID.eq(POSTS.THREAD_ID).and(POSTS.BOARD_CODE.eq(code)))
                 .where(THREADS.BOARD_CODE.eq(code))
@@ -55,9 +60,11 @@ public class ThreadRepository {
         var nextval = context.dsl().nextval(sequence).intValue();
 
         context.insertInto(THREADS, THREADS.ID, THREADS.BOARD_CODE, THREADS.NAME)
-                .values(nextval, requestThreadDTO.boardCode(), requestThreadDTO.name()).execute();
+                .values(nextval, requestThreadDTO.boardCode(), requestThreadDTO.name())
+                .execute();
 
         context.insertInto(POSTS, POSTS.ID, POSTS.THREAD_ID, POSTS.BOARD_CODE, POSTS.COMMENT)
-                .values(nextval, nextval, requestThreadDTO.boardCode(), requestThreadDTO.comment()).execute();
+                .values(nextval, nextval, requestThreadDTO.boardCode(), requestThreadDTO.comment())
+                .execute();
     }
 }

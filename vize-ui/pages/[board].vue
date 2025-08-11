@@ -47,10 +47,11 @@ async function createThread() {
       <div class="thread-catalog-board-list">/{{ board.code }}/ - {{ board.name }}</div>
     </div>
     <hr style="width: 75%">
-    <div class="create-thread-btn" @click="isCreatingThread = !isCreatingThread">
+    <div class="create-thread-btn">
       [
-      <span v-if="!isCreatingThread" class="create-thread-btn-text">Start a new thread</span>
-      <span v-else class="create-thread-btn-text">Close</span>
+      <span v-if="!isCreatingThread" class="create-thread-btn-text" @click="isCreatingThread = true"
+      >Start a new thread</span>
+      <span v-else class="create-thread-btn-text" @click="isCreatingThread = false">Close</span>
       ]
     </div>
     <form v-if="isCreatingThread" class="create-thread-body" @submit.prevent="createThread">

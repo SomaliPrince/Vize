@@ -9,7 +9,7 @@ defineProps<{
 </script>
 
 <template>
-  <div class="thread-body">
+  <div class="thread-сard-body">
     <NuxtLink
         :to="{ name: 'code-threads-id', params: { code: boardCode, id: thread.id } }"
         class="thread-card-img-box">
@@ -33,7 +33,7 @@ defineProps<{
 </template>
 
 <style scoped lang="sass">
-.thread-body
+.thread-сard-body
   font-size: 14px
   flex: 0 1 15rem
   margin: 1rem

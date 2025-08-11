@@ -1,11 +1,11 @@
 package com.vize.controller;
 
+import com.vize.dto.RequestCreatePostDTO;
+import com.vize.dto.ResponsePostDTO;
 import com.vize.repo.PostRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("posts")
@@ -13,6 +13,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class PostController {
 
     private final PostRepository postRepository;
+
+    @PostMapping
+    public ResponsePostDTO createPost(@RequestBody @Validated RequestCreatePostDTO post) {
+        return postRepository.createPost(post);
+    }
 
     @GetMapping("/count")
     public Integer countAllPosts() {

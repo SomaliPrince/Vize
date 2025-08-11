@@ -5,6 +5,6 @@ import java.util.List;
 public record ResponseFullThreadDTO(
         Integer id,
         String name,
-        List<PostDTO> posts
+        List<ResponsePostDTO> posts
 ) {
 }
