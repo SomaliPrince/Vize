@@ -1,9 +1,8 @@
 <script setup lang="ts">
 
 import type {CreatePost} from "~/types/data";
-import {emit} from "nitropack/presets/_unenv/workerd/process";
 
-defineEmits(['closeReply']);
+const emit = defineEmits(['closeReply']);
 const prop = defineProps({
   board: {
     type: String,

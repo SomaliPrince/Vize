@@ -1,14 +1,18 @@
 <script setup lang="ts">
 import {useThreadStore} from "~/stores/threads";
-import type {OpPost, Post} from "~/types/data";
+import type {OpPost} from "~/types/data";
 import ReplyWindow from "~/components/ReplyWindow.vue";
 
 const url: string[] = useRoute().path.split("/");
-const boardCode: string = url[1]
+const boardCode: string = url[1]!;
 const threadId: number = Number(url[3]);
+
 await useThreadStore().fetchThreads(boardCode);
-const posts: Post[] = useThreadStore().getThreadPostsOnBoard(boardCode, threadId);
+const posts = computed(() => {
+  return useThreadStore().getThreadPostsOnBoard(boardCode, threadId);
+})
 const op: OpPost = useThreadStore().getThreadOpPostOnBoard(boardCode, threadId)
+
 const isReplying = ref(false);
 const replyWindow = ref<InstanceType<typeof ReplyWindow>>();
 
@@ -101,6 +105,8 @@ const reply = async (postId: string) => {
   overflow: auto
   display: block
 
-.thread-post-details-id
+.thread-post-details-id:hover
+  color: green
   cursor: grab
+
 </style>

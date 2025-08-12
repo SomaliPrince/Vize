@@ -14,10 +14,6 @@ export default defineNuxtConfig({
     },
     modules: [
         '@pinia/nuxt',
-        '@nuxt/eslint',
-        '@nuxt/fonts',
-        '@nuxt/icon',
-        '@nuxt/image',
-        '@nuxt/scripts'
+        '@nuxt/eslint'
     ]
 })

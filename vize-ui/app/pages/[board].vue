@@ -43,7 +43,7 @@ async function createThread() {
     <div class="thread-catalog-header">
       <img
           class="thread-catalog-img"
-          src="public/temp-title.png" alt="header">
+          src="/temp-title.png" alt="header">
       <div class="thread-catalog-board-list">/{{ board.code }}/ - {{ board.name }}</div>
     </div>
     <hr style="width: 75%">
