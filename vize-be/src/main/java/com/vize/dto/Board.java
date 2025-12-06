@@ -1,6 +1,6 @@
 package com.vize.dto;
 
-public record BoardDTO(
+public record Board(
         String code,
         String name
 ) {

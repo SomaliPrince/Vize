@@ -1,6 +1,6 @@
 package com.vize.controller;
 
-import com.vize.dto.BoardDTO;
+import com.vize.dto.Board;
 import com.vize.repo.BoardRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +17,7 @@ public class BoardController {
     private final BoardRepository boardRepository;
 
     @GetMapping
-    public List<BoardDTO> getAllBoardCodes() {
+    public List<Board> getAllBoardCodes() {
         return boardRepository.getBoards();
     }
 

@@ -1,11 +1,10 @@
 package com.vize.repo;
 
-import com.vize.dto.RequestCreatePostDTO;
-import com.vize.dto.ResponsePostDTO;
+import com.vize.dto.CreatePostRequest;
+import com.vize.dto.GetPostResponse;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
 import org.jooq.Field;
-import org.jooq.Records;
 import org.jooq.impl.DSL;
 import org.springframework.stereotype.Repository;
 
@@ -32,13 +31,13 @@ public class PostRepository {
         return context.fetchCount(POSTS, DSL.localDate(POSTS.CREATED_AT.cast(date)).eq(LocalDate.now()));
     }
 
-    public ResponsePostDTO createPost(RequestCreatePostDTO post) {
+    public GetPostResponse createPost(CreatePostRequest post) {
         String sequence = post.board().concat("_seq");
         var nextval = context.dsl().nextval(sequence).intValue();
 
         return context.insertInto(POSTS, POSTS.ID, POSTS.BOARD_CODE, POSTS.THREAD_ID, POSTS.COMMENT)
                 .values(nextval, post.board(), post.threadId(), post.comment())
                 .returningResult(POSTS.ID, POSTS.COMMENT, POSTS.CREATED_AT)
-                .fetchOneInto(ResponsePostDTO.class);
+                .fetchOneInto(GetPostResponse.class);
     }
 }

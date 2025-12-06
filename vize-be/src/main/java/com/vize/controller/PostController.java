@@ -1,7 +1,7 @@
 package com.vize.controller;
 
-import com.vize.dto.RequestCreatePostDTO;
-import com.vize.dto.ResponsePostDTO;
+import com.vize.dto.CreatePostRequest;
+import com.vize.dto.GetPostResponse;
 import com.vize.repo.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
@@ -15,7 +15,7 @@ public class PostController {
     private final PostRepository postRepository;
 
     @PostMapping
-    public ResponsePostDTO createPost(@RequestBody @Validated RequestCreatePostDTO post) {
+    public GetPostResponse createPost(@RequestBody @Validated CreatePostRequest post) {
         return postRepository.createPost(post);
     }
 

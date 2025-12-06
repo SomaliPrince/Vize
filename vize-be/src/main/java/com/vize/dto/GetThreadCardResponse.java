@@ -2,7 +2,7 @@ package com.vize.dto;
 
 import java.time.LocalDateTime;
 
-public record ResponseThreadCardDTO(
+public record GetThreadCardResponse(
         Integer id,
         String name,
         String comment,

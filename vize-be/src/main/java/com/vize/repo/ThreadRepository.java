@@ -1,9 +1,9 @@
 package com.vize.repo;
 
-import com.vize.dto.RequestCreateThreadDTO;
-import com.vize.dto.ResponseFullThreadDTO;
-import com.vize.dto.ResponsePostDTO;
-import com.vize.dto.ResponseThreadCardDTO;
+import com.vize.dto.CreateThreadRequest;
+import com.vize.dto.GetFullThreadResponse;
+import com.vize.dto.GetPostResponse;
+import com.vize.dto.GetThreadCardResponse;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
 import org.jooq.Records;
@@ -22,7 +22,7 @@ public class ThreadRepository {
 
     private final DSLContext context;
 
-    public List<ResponseThreadCardDTO> getThreadCards(String code) {
+    public List<GetThreadCardResponse> getThreadCards(String code) {
         //Order inside select must match fetch target DTO
         return context.select(
                         THREADS.ID.as("id"),
@@ -34,16 +34,16 @@ public class ThreadRepository {
                 .on(THREADS.ID.eq(POSTS.ID).and(POSTS.BOARD_CODE.eq(code)))
                 .where(THREADS.BOARD_CODE.eq(code))
                 .fetch()
-                .map(Records.mapping(ResponseThreadCardDTO::new));
+                .map(Records.mapping(GetThreadCardResponse::new));
     }
 
-    public List<ResponseFullThreadDTO> getThreads(String code) {
+    public List<GetFullThreadResponse> getThreads(String code) {
         return context.select(
                         THREADS.ID.as("id"),
                         THREADS.NAME.as("name"),
                         multisetAgg(POSTS.ID, POSTS.COMMENT, POSTS.CREATED_AT)
                                 .orderBy(POSTS.ID.asc())
-                                .convertFrom(x -> x.map(record -> new ResponsePostDTO(
+                                .convertFrom(x -> x.map(record -> new GetPostResponse(
                                         record.component1(),
                                         record.component2(),
                                         record.component3().format(DateTimeFormatter.ofPattern("MM/dd/yy(EEE)HH:mm:ss"))
@@ -52,10 +52,10 @@ public class ThreadRepository {
                 .join(POSTS).on(THREADS.ID.eq(POSTS.THREAD_ID).and(POSTS.BOARD_CODE.eq(code)))
                 .where(THREADS.BOARD_CODE.eq(code))
                 .groupBy(THREADS.ID, THREADS.BOARD_CODE, THREADS.NAME)
-                .fetch(Records.mapping(ResponseFullThreadDTO::new));
+                .fetch(Records.mapping(GetFullThreadResponse::new));
     }
 
-    public void createThread(RequestCreateThreadDTO requestThreadDTO) {
+    public void createThread(CreateThreadRequest requestThreadDTO) {
         String sequence = requestThreadDTO.boardCode().concat("_seq");
         var nextval = context.dsl().nextval(sequence).intValue();
 

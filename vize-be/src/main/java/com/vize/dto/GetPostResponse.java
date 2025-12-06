@@ -1,6 +1,6 @@
 package com.vize.dto;
 
-public record ResponsePostDTO(
+public record GetPostResponse(
         Integer id,
         String comment,
         String createdAt

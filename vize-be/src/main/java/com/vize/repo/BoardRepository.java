@@ -1,6 +1,6 @@
 package com.vize.repo;
 
-import com.vize.dto.BoardDTO;
+import com.vize.dto.Board;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
@@ -15,9 +15,9 @@ public class BoardRepository {
 
     private final DSLContext context;
 
-    public List<BoardDTO> getBoards() {
+    public List<Board> getBoards() {
         return context.selectFrom(BOARDS)
-                .fetchInto(BoardDTO.class);
+                .fetchInto(Board.class);
     }
 
 }

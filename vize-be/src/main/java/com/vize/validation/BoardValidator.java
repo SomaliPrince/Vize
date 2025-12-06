@@ -1,6 +1,6 @@
 package com.vize.validation;
 
-import com.vize.dto.BoardDTO;
+import com.vize.dto.Board;
 import com.vize.repo.BoardRepository;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
@@ -16,7 +16,7 @@ public class BoardValidator implements ConstraintValidator<ExistingBoard, String
 
     @Override
     public void initialize(ExistingBoard constraintAnnotation) {
-        existingBoardCodes = boardRepository.getBoards().stream().map(BoardDTO::code).toList();
+        existingBoardCodes = boardRepository.getBoards().stream().map(Board::code).toList();
     }
 
     @Override

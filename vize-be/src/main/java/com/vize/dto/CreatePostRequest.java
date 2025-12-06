@@ -3,7 +3,7 @@ package com.vize.dto;
 import com.vize.validation.ExistingBoard;
 import jakarta.validation.constraints.NotBlank;
 
-public record RequestCreatePostDTO(
+public record CreatePostRequest(
         @NotBlank
         @ExistingBoard
         String board,

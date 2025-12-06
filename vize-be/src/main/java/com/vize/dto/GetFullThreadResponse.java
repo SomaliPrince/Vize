@@ -2,9 +2,9 @@ package com.vize.dto;
 
 import java.util.List;
 
-public record ResponseFullThreadDTO(
+public record GetFullThreadResponse(
         Integer id,
         String name,
-        List<ResponsePostDTO> posts
+        List<GetPostResponse> posts
 ) {
 }
