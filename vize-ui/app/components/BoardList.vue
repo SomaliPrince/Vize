@@ -2,7 +2,9 @@
 import type {Board} from "~/types/data";
 import {useBoardStore} from "~/stores/boards";
 
-const boards: Board[] = await useBoardStore().fetchBoardData();
+const store =  useBoardStore();
+await store.fetchBoards();
+const boards: Board[] = store.getBoards();
 
 </script>
 

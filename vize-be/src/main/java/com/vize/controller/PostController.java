@@ -3,10 +3,16 @@ package com.vize.controller;
 import com.vize.dto.CreatePostRequest;
 import com.vize.dto.GetPostResponse;
 import com.vize.repo.PostRepository;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
+@Slf4j
 @RestController
 @RequestMapping("posts")
 @RequiredArgsConstructor
@@ -15,8 +21,20 @@ public class PostController {
     private final PostRepository postRepository;
 
     @PostMapping
-    public GetPostResponse createPost(@RequestBody @Validated CreatePostRequest post) {
-        return postRepository.createPost(post);
+    public GetPostResponse createPost(@RequestBody @Validated CreatePostRequest post,
+                                      @CookieValue(name = "guest_id") String guestId, HttpServletResponse response) {
+        log.info("New uuid: {}", guestId);
+        if(guestId == null || guestId.isEmpty()) {
+            UUID uuid = UUID.randomUUID();
+            Cookie cookie = new Cookie("guest_id", uuid.toString());
+            cookie.setPath("/");
+            cookie.setHttpOnly(true);
+            //        cookie.setSecure(true);
+            response.addCookie(cookie);
+
+            return postRepository.createPost(post, uuid);
+        }
+        return postRepository.createPost(post, UUID.fromString(guestId));
     }
 
     @GetMapping("/count")

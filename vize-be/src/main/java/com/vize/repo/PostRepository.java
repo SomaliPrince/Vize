@@ -9,6 +9,7 @@ import org.jooq.impl.DSL;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 import static com.vize.jooq.generated.public_.tables.Posts.POSTS;
 
@@ -31,12 +32,12 @@ public class PostRepository {
         return context.fetchCount(POSTS, DSL.localDate(POSTS.CREATED_AT.cast(date)).eq(LocalDate.now()));
     }
 
-    public GetPostResponse createPost(CreatePostRequest post) {
+    public GetPostResponse createPost(CreatePostRequest post, UUID uuid) {
         String sequence = post.board().concat("_seq");
         var nextval = context.dsl().nextval(sequence).intValue();
 
-        return context.insertInto(POSTS, POSTS.ID, POSTS.BOARD_CODE, POSTS.THREAD_ID, POSTS.COMMENT)
-                .values(nextval, post.board(), post.threadId(), post.comment())
+        return context.insertInto(POSTS, POSTS.ID, POSTS.BOARD_CODE, POSTS.THREAD_ID, POSTS.COMMENT, POSTS.GUEST_ID)
+                .values(nextval, post.board(), post.threadId(), post.comment(), uuid)
                 .returningResult(POSTS.ID, POSTS.COMMENT, POSTS.CREATED_AT)
                 .fetchOneInto(GetPostResponse.class);
     }

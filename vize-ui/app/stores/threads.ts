@@ -20,6 +20,7 @@ export const useThreadStore = defineStore('threads', {
             try {
                 const createdPost: Post = await $fetch<Post>(`${useRuntimeConfig().public.backendUrl}/posts`, {
                     method: 'POST',
+                    credentials: 'include',
                     body: post
                 })
                 this.data[post.board]?.threads.find(t => t.id === post.threadId)?.posts.push(createdPost);

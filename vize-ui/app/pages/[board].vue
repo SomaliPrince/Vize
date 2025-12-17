@@ -1,28 +1,24 @@
 <script setup lang="ts">
-import type {Thread} from "~/types/data";
+import type {Board, Thread} from "~/types/data";
 import {useBoardStore} from "~/stores/boards";
 
-const currentPath: string = useRoute().path.slice(1);
+definePageMeta({
+  middleware: 'validate-board'
+})
+
+const boardCode: string = useRoute().params.board as string;
+const board: Board = useBoardStore().getBoard(boardCode);
+
 const {
   data: threadsFetch,
   refresh: refreshThreads
-} = await useFetch<Thread[]>(`${useRuntimeConfig().public.backendUrl}/threads/${currentPath}`)
+} = await useFetch<Thread[]>(`${useRuntimeConfig().public.backendUrl}/threads/${board.code}`);
 
-const boardStore = useBoardStore()
 const isCreatingThread = ref(false);
-
-await useAsyncData(
-    async () => {
-      await boardStore.fetchBoardData();
-      return boardStore.getBoardByCode(currentPath)
-    }
-);
-
-const board = computed(() => boardStore.getBoardByCode(currentPath))
 const threads = computed<Thread[]>(() => threadsFetch.value || []);
 
 const form = ref({
-      boardCode: board.value.code,
+      boardCode: board.code,
       name: '',
       comment: ''
     }
