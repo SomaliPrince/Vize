@@ -16,11 +16,31 @@ import static com.vize.jooq.generated.public_.tables.Posts.POSTS;
 import static com.vize.jooq.generated.public_.tables.Threads.THREADS;
 import static org.jooq.impl.DSL.multisetAgg;
 
+@SuppressWarnings("DuplicatedCode")
 @Repository
 @RequiredArgsConstructor
 public class ThreadRepository {
 
     private final DSLContext context;
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yy(EEE)HH:mm:ss");
+
+    public GetFullThreadResponse getFullThread(String board, Integer thread) {
+        return context.select(
+                THREADS.ID.as("id"),
+                THREADS.NAME.as("name"),
+                multisetAgg(POSTS.ID, POSTS.COMMENT, POSTS.CREATED_AT)
+                        .orderBy(POSTS.ID.asc())
+                        .convertFrom(x -> x.map(record -> new GetPostResponse(
+                                record.component1(),
+                                record.component2(),
+                                record.component3().format(formatter)
+                        ))))
+                .from(THREADS)
+                .join(POSTS).on(THREADS.ID.eq(POSTS.THREAD_ID).and(POSTS.BOARD_CODE.eq(board)))
+                .where(THREADS.BOARD_CODE.eq(board).and(THREADS.ID.eq(thread)))
+                .groupBy(THREADS.ID, THREADS.BOARD_CODE, THREADS.NAME)
+                .fetchOne(Records.mapping(GetFullThreadResponse::new));
+    }
 
     public List<GetThreadCardResponse> getThreadCards(String code) {
         //Order inside select must match fetch target DTO
@@ -46,7 +66,7 @@ public class ThreadRepository {
                                 .convertFrom(x -> x.map(record -> new GetPostResponse(
                                         record.component1(),
                                         record.component2(),
-                                        record.component3().format(DateTimeFormatter.ofPattern("MM/dd/yy(EEE)HH:mm:ss"))
+                                        record.component3().format(formatter)
                                 ))))
                 .from(THREADS)
                 .join(POSTS).on(THREADS.ID.eq(POSTS.THREAD_ID).and(POSTS.BOARD_CODE.eq(code)))

@@ -16,9 +16,14 @@ public class ThreadController {
 
     private final ThreadRepository threadRepository;
 
-    @GetMapping("/{code}")
-    public List<GetFullThreadResponse> getThreadsByBoard(@PathVariable String code) {
-        return threadRepository.getThreads(code);
+    @GetMapping("/{board}")
+    public List<GetFullThreadResponse> getThreadsByBoard(@PathVariable String board) {
+        return threadRepository.getThreads(board);
+    }
+
+    @GetMapping("/{board}/{thread}")
+    public GetFullThreadResponse getThread(@PathVariable String board, @PathVariable Integer thread) {
+        return threadRepository.getFullThread(board, thread);
     }
 
     @PostMapping

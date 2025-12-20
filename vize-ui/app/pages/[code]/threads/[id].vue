@@ -3,15 +3,21 @@ import {useThreadStore} from "~/stores/threads";
 import type {OpPost} from "~/types/data";
 import ReplyWindow from "~/components/ReplyWindow.vue";
 
-const url: string[] = useRoute().path.split("/");
-const boardCode: string = url[1]!;
-const threadId: number = Number(url[3]);
+const route = useRoute();
+const boardStore = useBoardStore();
+const threadStore = useThreadStore();
 
-await useThreadStore().fetchThreads(boardCode);
-const posts = computed(() => {
-  return useThreadStore().getThreadPostsOnBoard(boardCode, threadId);
-})
-const op: OpPost = useThreadStore().getThreadOpPostOnBoard(boardCode, threadId)
+const boardCode = computed(() => route.params.code as string);
+const threadId = computed(() => Number(route.params.id as string));
+const board = computed(() => boardStore.getBoard(boardCode.value));
+
+const { data, refresh } = await useAsyncData(
+    () => `thread-${boardCode.value}-${threadId.value}`,
+    () => threadStore.fetchThread(boardCode.value, threadId.value),
+    { watch: [boardCode, threadId]  }
+)
+
+const op: OpPost = threadStore.getOpPost(boardCode.value, threadId.value)
 
 const isReplying = ref(false);
 const replyWindow = ref<InstanceType<typeof ReplyWindow>>();
@@ -55,7 +61,7 @@ const reply = async (postId: string) => {
       <article class="thread-op-comment">{{ op.comment }}</article>
     </div>
     <div class="thread-posts-body">
-      <div v-for="post in posts" :key="post.id" class="thread-post-body">
+      <div v-for="post in data?.posts" :key="post.id" class="thread-post-body">
         <div class="thread-post-details">
           <!--    TODO security-->
           <span class="thread-post-details-user">Anonymous&ensp;</span>

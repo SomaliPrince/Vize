@@ -1,24 +1,26 @@
 <script setup lang="ts">
-import type {Board, Thread} from "~/types/data";
-import {useBoardStore} from "~/stores/boards";
+
+const route = useRoute();
+const boardStore = useBoardStore();
+const threadStore = useThreadStore();
 
 definePageMeta({
   middleware: 'validate-board'
 })
 
-const boardCode: string = useRoute().params.board as string;
-const board: Board = useBoardStore().getBoard(boardCode);
+const boardCode = computed(() => useRoute().params.board as string);
+const board = computed(() => useBoardStore().getBoard(boardCode.value));
 
-const {
-  data: threadsFetch,
-  refresh: refreshThreads
-} = await useFetch<Thread[]>(`${useRuntimeConfig().public.backendUrl}/threads/${board.code}`);
+const { data, refresh } = await useAsyncData(
+    () => `threads-${boardCode.value}`,
+    () => threadStore.fetchThreads(boardCode.value),
+    { watch: [boardCode]  }
+)
 
 const isCreatingThread = ref(false);
-const threads = computed<Thread[]>(() => threadsFetch.value || []);
 
 const form = ref({
-      boardCode: board.code,
+      boardCode: board.value.code,
       name: '',
       comment: ''
     }
@@ -30,7 +32,7 @@ async function createThread() {
     body: form.value
   })
   isCreatingThread.value = false;
-  await refreshThreads();
+  refresh();
 }
 </script>
 
@@ -62,7 +64,7 @@ async function createThread() {
 
     <div class="thread-catalog-threads">
       <ThreadCard
-          v-for="thread in threads"
+          v-for="thread in data"
           :id="thread.id"
           :key="thread.id"
           :thread="thread"

@@ -17,7 +17,6 @@ const boards: Board[] = store.getBoards();
       HOME
     </NuxtLink>
     &#91;
-    <!--IGNORE THIS WARN-->
     <NuxtLink
         v-for="(board, index) in boards"
         :key="board.code"

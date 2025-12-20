@@ -1,92 +1,96 @@
 import {defineStore} from 'pinia';
 import type {CreatePost, OpPost, Post, Thread} from "~/types/data";
 
-export interface ThreadsState {
-    threads: Thread[];
-    isLoading: boolean;
-    error: string | null;
-}
-
-export interface ThreadsStoreState {
-    data: Record<string, ThreadsState>
-}
-
 export const useThreadStore = defineStore('threads', {
-    state: (): ThreadsStoreState => <ThreadsStoreState>({
-        data: {}
+    state: () => ({
+        threadsByBoard: {} as Record<string, Record<number, Thread>>,
+        error: {} as Record<string, string | null>,
     }),
-    actions: {
-        async createPost(post: CreatePost): Promise<void> {
-            try {
-                const createdPost: Post = await $fetch<Post>(`${useRuntimeConfig().public.backendUrl}/posts`, {
-                    method: 'POST',
-                    credentials: 'include',
-                    body: post
-                })
-                this.data[post.board]?.threads.find(t => t.id === post.threadId)?.posts.push(createdPost);
-            } catch (error) {
-                console.error('Failed to add post:', error);
-                throw error;
-            }
-        },
-        async fetchThreads(boardCode: string): Promise<void> {
-            if (!this.data[boardCode]) {
-                this.data[boardCode] = {threads: [], isLoading: false, error: null};
-            }
-            if (this.data.isLoading) {
-                console.log(`Fetch for board ${boardCode} already in progress.`);
-                return;
-            }
-            this.data[boardCode].isLoading = true;
-            this.data[boardCode].error = null;
-
-            try {
-                const {data, error} = await useFetch<Thread[]>(
-                    `${useRuntimeConfig().public.backendUrl}/threads/${boardCode}`,
-                    {
-                        key: `threads-${boardCode}`,
-                        server: true,
-                        default: () => [] as Thread[]
-                    }
-                )
-                if (error.value) throw new Error(error.value.message || 'Failed to fetch threads')
-
-                this.data[boardCode].threads = data.value;
-            } catch (error) {
-                this.data[boardCode].error = error instanceof Error ? error.message : 'Unknown error occurred'
-                console.error('Failed to fetch thread data:', error)
-                throw error
-            } finally {
-                this.data[boardCode].isLoading = false
-            }
-        }
-    },
     getters: {
-        getThreadPostsOnBoard: (state) => (boardId: string, threadId: number): Post[] => {
-            const foundThread = state.data[boardId]?.threads.find(t => t.id === threadId);
-            if (!foundThread) throw new Error(`Thread with id ${threadId} not found`);
-
-            return foundThread.posts.toSpliced(0, 1)
+        isEmpty: (state) => (boardCode: string) => {
+            return state.threadsByBoard[boardCode] == null || Object.keys(state.threadsByBoard[boardCode]).length == 0
         },
 
-        getThreadOpPostOnBoard: (state) => (boardId: string, threadId: number): OpPost => {
-            const thread = state.data[boardId]?.threads.find(t => t.id === threadId);
+        getThread: (state) => (boardCode: string, threadId: number) => {
+            return state.threadsByBoard[boardCode]?.[threadId];
+        },
 
-            if (!thread) throw new Error(`Thread with id ${threadId} not found`);
+        getThreads: (state) => (boardCode: string)  => {
+            const threads = state.threadsByBoard[boardCode];
+            if(!threads) return [];
 
-            const firstPost = thread.posts.at(0);
-            if (!firstPost) throw new Error(`Thread ${threadId} has no posts`);
+            return Object.values(threads).sort((a, b) => {
+                return b.id - a.id;
+            });
+        },
+
+        getPosts: (state) => (boardCode: string, threadId: number) => {
+            const thread = state.threadsByBoard[boardCode]?.[threadId];
+            return thread ? thread.posts.slice(1) : []
+        },
+
+        getOpPost: (state) => (boardCode: string, threadId: number): OpPost => {
+            if(!state.threadsByBoard[boardCode] || !state.threadsByBoard[boardCode][threadId])
+                throw Error(`Failed to fetch thread for [${boardCode} ${threadId}]`)
+            const thread = state.threadsByBoard[boardCode][threadId]
+            const firstPost = thread.posts[0]
+            if (!firstPost)
+                throw Error(`Failed to fetch OP post for [${boardCode} ${threadId}]`)
 
             return {
                 id: thread.id,
                 comment: firstPost.comment,
                 createdAt: firstPost.createdAt,
                 name: thread.name
-            };
-        },
-        isBoardLoading: (state) => (boardId: string): boolean => {
-            return state.data[boardId]?.isLoading || false;
-        },
+            }
+        }
     },
 
+    actions: {
+        async fetchThreads(boardCode: string) {
+            try {
+                const data = await $fetch<Thread[]>(`${useRuntimeConfig().public.backendUrl}/threads/${boardCode}`)
+                const normalized: Record<number, Thread> = {};
+                data.forEach(t => { normalized[t.id] = t; });
+
+                this.threadsByBoard[boardCode] = normalized;
+                return data;
+            } catch (err: any) {
+                this.error[boardCode] = err.message
+                throw err
+            }
+        },
+
+        async fetchThread(boardCode: string, threadId: number) {
+            try {
+                const data = await $fetch<Thread>(`${useRuntimeConfig().public.backendUrl}/threads/${boardCode}/${threadId}`)
+                this.$patch((state) => {
+                    if (!state.threadsByBoard[boardCode]) state.threadsByBoard[boardCode] = {}
+                    state.threadsByBoard[boardCode][threadId] = data
+                })
+                return data;
+            } catch (err: any) {
+                this.error[boardCode] = err.message
+                throw err
+            }
+        },
+
+        async createPost(post: CreatePost) {
+            try {
+                const createdPost = await $fetch<Post>(`${useRuntimeConfig().public.backendUrl}/posts`, {
+                    method: 'POST',
+                    credentials: 'include',
+                    body: post
+                })
+                const boardThreads = this.threadsByBoard[post.board]
+                if (boardThreads) {
+                    const thread = boardThreads[post.threadId]
+                    if (thread) thread.posts.push(createdPost)
+                }
+            } catch (error) {
+                console.error('Post failed:', error)
+                throw error
+            }
+        }
+    }
 })

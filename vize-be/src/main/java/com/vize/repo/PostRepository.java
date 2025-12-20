@@ -9,6 +9,7 @@ import org.jooq.impl.DSL;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 import static com.vize.jooq.generated.public_.tables.Posts.POSTS;
@@ -38,7 +39,8 @@ public class PostRepository {
 
         return context.insertInto(POSTS, POSTS.ID, POSTS.BOARD_CODE, POSTS.THREAD_ID, POSTS.COMMENT, POSTS.GUEST_ID)
                 .values(nextval, post.board(), post.threadId(), post.comment(), uuid)
-                .returningResult(POSTS.ID, POSTS.COMMENT, POSTS.CREATED_AT)
+                .returningResult(POSTS.ID, POSTS.COMMENT,
+                        DSL.field("to_char({0}, 'MM/DD/YY(Dy)HH24:MI:SS')", String.class, POSTS.CREATED_AT).as("created_at"))
                 .fetchOneInto(GetPostResponse.class);
     }
 }
