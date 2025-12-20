@@ -3,13 +3,12 @@ import type {Board} from "~/types/data";
 import {useBoardStore} from "~/stores/boards";
 
 const store =  useBoardStore();
-await store.fetchBoards();
 const boards: Board[] = store.getBoards();
 
 </script>
 
 <template>
-  <span class="board-list">
+  <span v-once class="board-list">
     <NuxtLink
         style="margin-right: 10px"
         external
